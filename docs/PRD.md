@@ -154,6 +154,7 @@ Persistence is opt-in and browser-only.
 - Enforce a configurable maximum command-history length.
 - Silently fall back to in-memory behavior when storage is unavailable or blocked.
 - Do not persist command outputs in v1.
+- Do not include a built-in `theme` command in v1; consumers change themes through configuration or the imperative API.
 
 ### 8.8 Accessibility
 

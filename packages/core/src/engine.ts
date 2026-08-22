@@ -12,6 +12,7 @@ import type {
   TerminalConfig,
   TerminalOutput,
   TerminalOutputBlock,
+  ThemeName,
 } from './types.js';
 
 /** A submitted command preserved in the terminal transcript. */
@@ -109,12 +110,13 @@ export function createTerminalEngine(
   const registry = createCommandRegistry(config);
   const historyLimit = resolveHistoryLimit(config.historyLimit);
   const persistedHistory = resolvePersistedHistory(config, options.storage, historyLimit);
+  const persistedTheme = resolvePersistedTheme(config, options.storage);
   const transcript: TerminalTranscriptEntry[] = [];
   const history: string[] = [...persistedHistory.history];
   const listeners = new Set<TerminalStateListener>();
   let inputValue = '';
   let completionSuggestions: TerminalCompletionSuggestion[] = [];
-  let activeTheme = resolveTheme(config.theme, config.themes);
+  let activeTheme = resolveTheme(persistedTheme.theme ?? config.theme, config.themes);
   let historyCursor: number | undefined;
   let historyDraft = '';
   let isExecuting = false;
@@ -238,6 +240,7 @@ export function createTerminalEngine(
   function setTheme(theme: TerminalThemeInput): void {
     assertActive();
     activeTheme = resolveTheme(theme, config.themes);
+    persistTheme(theme);
     emit();
   }
 
@@ -363,6 +366,22 @@ export function createTerminalEngine(
     }
   }
 
+  function persistTheme(theme: TerminalThemeInput): void {
+    if (!persistedTheme.storageKey || !options.storage) {
+      return;
+    }
+
+    try {
+      if (typeof theme === 'string') {
+        options.storage.set(persistedTheme.storageKey, JSON.stringify(theme));
+      } else {
+        options.storage.remove(persistedTheme.storageKey);
+      }
+    } catch {
+      // Persistence is an optional enhancement; theme updates must continue.
+    }
+  }
+
   function resetHistoryNavigation(): void {
     historyCursor = undefined;
     historyDraft = '';
@@ -445,6 +464,39 @@ function resolvePersistedHistory(
     return { history: parsed.slice(-historyLimit), storageKey };
   } catch {
     return { history: [], storageKey };
+  }
+}
+
+function resolvePersistedTheme(
+  config: TerminalConfig,
+  storage: TerminalStorageAdapter | undefined,
+): { theme?: ThemeName; storageKey?: string } {
+  if (config.storage?.enabled !== true || config.storage.persistTheme !== true || !storage) {
+    return {};
+  }
+
+  const consumerStorageKey = config.storage.key.trim();
+  if (!consumerStorageKey) {
+    return {};
+  }
+
+  const storageKey = createTerminalStorageKey(consumerStorageKey, 'theme');
+
+  try {
+    const serialized = storage.get(storageKey);
+    if (!serialized) {
+      return { storageKey };
+    }
+
+    const parsed: unknown = JSON.parse(serialized);
+    if (typeof parsed !== 'string') {
+      return { storageKey };
+    }
+
+    resolveTheme(parsed, config.themes);
+    return { theme: parsed, storageKey };
+  } catch {
+    return { storageKey };
   }
 }
 

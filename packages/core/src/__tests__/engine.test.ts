@@ -272,6 +272,20 @@ describe('createTerminalEngine', () => {
     expect(storage.remove).not.toHaveBeenCalled();
   });
 
+  it('does not touch storage when enabled persistence has a blank consumer key', () => {
+    const storage = { get: vi.fn(), set: vi.fn(), remove: vi.fn() };
+    const engine = createTerminalEngine(
+      { storage: { enabled: true, key: '   ', persistTheme: true } },
+      { storage },
+    );
+
+    engine.setTheme('matrix');
+
+    expect(storage.get).not.toHaveBeenCalled();
+    expect(storage.set).not.toHaveBeenCalled();
+    expect(storage.remove).not.toHaveBeenCalled();
+  });
+
   it('ignores malformed persisted history without interrupting the terminal', async () => {
     const storage = createMemoryStorageAdapter();
     storage.set(createTerminalStorageKey('teemo-terminal', 'history'), '{not-json');
@@ -325,6 +339,35 @@ describe('createTerminalEngine', () => {
       history: ['about'],
       theme: { name: 'custom', tokens: { accent: '#9acd32' } },
     });
+  });
+
+  it('restores and persists a valid named theme through opt-in storage', () => {
+    const storage = createMemoryStorageAdapter();
+    const themeKey = createTerminalStorageKey('teemo-terminal', 'theme');
+    storage.set(themeKey, JSON.stringify('matrix'));
+    const engine = createTerminalEngine(
+      { theme: 'dracula', storage: { enabled: true, key: 'teemo-terminal', persistTheme: true } },
+      { storage },
+    );
+
+    expect(engine.getState().theme.name).toBe('matrix');
+    engine.setTheme('amber');
+    expect(storage.get(themeKey)).toBe(JSON.stringify('amber'));
+  });
+
+  it('falls back to the configured theme when persisted theme data is unavailable or invalid', () => {
+    const storage = createMemoryStorageAdapter();
+    const themeKey = createTerminalStorageKey('teemo-terminal', 'theme');
+    storage.set(themeKey, JSON.stringify('missing'));
+
+    const engine = createTerminalEngine(
+      { theme: 'dracula', storage: { enabled: true, key: 'teemo-terminal', persistTheme: true } },
+      { storage },
+    );
+
+    expect(engine.getState().theme.name).toBe('dracula');
+    engine.setTheme({ accent: '#9acd32' });
+    expect(storage.get(themeKey)).toBeNull();
   });
 
   it('exposes ordered active suggestions for ambiguous prefixes and leaves zero matches unchanged', () => {
