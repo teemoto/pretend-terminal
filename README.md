@@ -84,6 +84,8 @@ export function Terminal() {
 }
 ```
 
+`PretendTerminal` accepts the same configuration fields as the core API, plus `className`, `style`, and `ariaLabel`. In v1, treat command/theme/persistence configuration as initialization-time props; use the imperative APIs in a custom integration when those need to change at runtime.
+
 ## Configuration
 
 The primary API is a configuration object. Static configurations can live in a JSON file; dynamic commands use JavaScript or TypeScript.

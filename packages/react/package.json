@@ -8,15 +8,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "style": "./dist/styles.css",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean --external react",
+    "build": "tsup src/index.tsx src/styles.css --format esm --dts --clean --external react",
     "clean": "rimraf dist",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"
@@ -24,7 +26,7 @@
   "peerDependencies": {
     "react": ">=18.0.0"
   },
-  "devDependencies": {
+  "dependencies": {
     "@pretend-terminal/core": "workspace:*"
   },
   "publishConfig": {
