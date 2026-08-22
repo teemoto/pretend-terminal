@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createTerminalEngine, TerminalEngineError } from '../index.js';
+import { createTerminalEngine, TerminalEngineError, type TerminalOutputBlock } from '../index.js';
 
 describe('createTerminalEngine', () => {
   it('executes static commands and records an echo plus structured output', async () => {
@@ -28,6 +28,31 @@ describe('createTerminalEngine', () => {
         { kind: 'output', output: { type: 'text', value: 'Captain Teemo on duty.' } },
       ],
     });
+  });
+
+  it('preserves every structured output type and ordered multi-block responses', async () => {
+    const response = [
+      { type: 'text', value: 'Hello, Teemo.' },
+      { type: 'lines', lines: ['One', 'Two'] },
+      { type: 'success', value: 'Saved.' },
+      { type: 'error', value: 'Try again.' },
+      { type: 'muted', value: 'Optional detail.' },
+      { type: 'accent', value: 'Featured.' },
+      { type: 'table', headers: ['Role', 'Region'], rows: [['Scout', 'Bandle City']] },
+      { type: 'link', label: 'Profile', href: 'https://example.com/teemo', openInNewTab: true },
+      { type: 'ascii', value: ' /\\_/\\\n( o.o )' },
+    ] satisfies readonly TerminalOutputBlock[];
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [{ name: 'showcase', response }],
+    });
+
+    await engine.run('showcase');
+
+    expect(engine.getState().transcript).toEqual([
+      { kind: 'command', value: 'showcase' },
+      ...response.map((output) => ({ kind: 'output' as const, output })),
+    ]);
   });
 
   it('ignores blank input and safely reports unknown commands', async () => {
@@ -72,6 +97,25 @@ describe('createTerminalEngine', () => {
     expect(engine.getState().transcript.at(-1)).toEqual({
       kind: 'output',
       output: { type: 'success', value: 'Ready.' },
+    });
+  });
+
+  it('records output returned by a synchronous dynamic handler', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'motto',
+          handler: () => ({ type: 'accent', value: 'Never underestimate the power of the Scout.' }),
+        },
+      ],
+    });
+
+    await engine.run('motto');
+
+    expect(engine.getState().transcript.at(-1)).toEqual({
+      kind: 'output',
+      output: { type: 'accent', value: 'Never underestimate the power of the Scout.' },
     });
   });
 
