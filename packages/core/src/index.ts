@@ -26,6 +26,16 @@ export {
 
 export { createTerminalEngine, TerminalEngineError } from './engine.js';
 
+export {
+  createBrowserStorageAdapter,
+  createMemoryStorageAdapter,
+  createSafeStorageAdapter,
+  createTerminalStorageKey,
+  TERMINAL_STORAGE_VERSION,
+} from './storage.js';
+
+export type { StorageLike, TerminalStorageAdapter, TerminalStorageRecordName } from './storage.js';
+
 export type {
   CommandTranscriptEntry,
   OutputTranscriptEntry,
