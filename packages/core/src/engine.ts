@@ -1,5 +1,6 @@
 import {
   createCommandRegistry,
+  normalizeCommand,
   type CommandRegistry,
   type RegisteredBuiltInCommand,
   type RegisteredCommand,
@@ -28,6 +29,8 @@ export type TerminalTranscriptEntry = CommandTranscriptEntry | OutputTranscriptE
 
 /** Immutable state snapshot supplied to renderer subscribers. */
 export interface TerminalEngineState {
+  /** The current renderer-controlled input value. */
+  readonly input: string;
   readonly transcript: readonly TerminalTranscriptEntry[];
   readonly history: readonly string[];
   readonly isExecuting: boolean;
@@ -40,6 +43,9 @@ export type TerminalRunResult =
   | { readonly status: 'executed'; readonly command: RegisteredCommand }
   | { readonly status: 'cleared'; readonly command: RegisteredBuiltInCommand };
 
+/** Direction used to navigate a terminal's session history. */
+export type TerminalHistoryDirection = 'previous' | 'next';
+
 /** Listener notified whenever the engine state changes. */
 export type TerminalStateListener = (state: TerminalEngineState) => void;
 
@@ -48,6 +54,8 @@ export interface TerminalEngine {
   readonly registry: CommandRegistry;
   getState(): TerminalEngineState;
   subscribe(listener: TerminalStateListener): () => void;
+  setInput(input: string): void;
+  navigateHistory(direction: TerminalHistoryDirection): string;
   run(input: string): Promise<TerminalRunResult>;
   clear(): void;
   destroy(): void;
@@ -61,9 +69,13 @@ export class TerminalEngineError extends Error {
 /** Creates a browser-independent terminal engine from consumer configuration. */
 export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngine {
   const registry = createCommandRegistry(config);
+  const historyLimit = resolveHistoryLimit(config.historyLimit);
   const transcript: TerminalTranscriptEntry[] = [];
   const history: string[] = [];
   const listeners = new Set<TerminalStateListener>();
+  let inputValue = '';
+  let historyCursor: number | undefined;
+  let historyDraft = '';
   let isExecuting = false;
   let destroyed = false;
 
@@ -77,6 +89,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     assertActive();
 
     return {
+      input: inputValue,
       transcript: [...transcript],
       history: [...history],
       isExecuting,
@@ -105,10 +118,53 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     emit();
   }
 
+  function setInput(input: string): void {
+    assertActive();
+    inputValue = input;
+    resetHistoryNavigation();
+    emit();
+  }
+
+  function navigateHistory(direction: TerminalHistoryDirection): string {
+    assertActive();
+
+    if (history.length === 0) {
+      return inputValue;
+    }
+
+    if (direction === 'previous') {
+      if (historyCursor === undefined) {
+        historyDraft = inputValue;
+        historyCursor = history.length - 1;
+      } else {
+        historyCursor = Math.max(0, historyCursor - 1);
+      }
+
+      inputValue = history[historyCursor];
+      emit();
+      return inputValue;
+    }
+
+    if (historyCursor === undefined) {
+      return inputValue;
+    }
+
+    if (historyCursor === history.length - 1) {
+      inputValue = historyDraft;
+      resetHistoryNavigation();
+    } else {
+      historyCursor += 1;
+      inputValue = history[historyCursor];
+    }
+
+    emit();
+    return inputValue;
+  }
+
   async function run(input: string): Promise<TerminalRunResult> {
     assertActive();
 
-    const normalizedInput = input.trim().toLowerCase();
+    const normalizedInput = normalizeCommand(input);
     if (!normalizedInput) {
       return { status: 'ignored' };
     }
@@ -119,7 +175,9 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
 
     const submittedInput = input.trim();
     const command = registry.get(input);
-    history.push(submittedInput);
+    inputValue = '';
+    resetHistoryNavigation();
+    recordHistory(submittedInput);
     transcript.push({ kind: 'command', value: submittedInput });
     config.onCommand?.(submittedInput);
 
@@ -206,6 +264,16 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     return () => listeners.delete(listener);
   }
 
+  function recordHistory(entry: string): void {
+    history.push(entry);
+    history.splice(0, Math.max(0, history.length - historyLimit));
+  }
+
+  function resetHistoryNavigation(): void {
+    historyCursor = undefined;
+    historyDraft = '';
+  }
+
   function destroy(): void {
     if (destroyed) {
       return;
@@ -215,7 +283,19 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     destroyed = true;
   }
 
-  return { registry, getState, subscribe, run, clear, destroy };
+  return { registry, getState, subscribe, setInput, navigateHistory, run, clear, destroy };
+}
+
+function resolveHistoryLimit(historyLimit: number | undefined): number {
+  if (historyLimit === undefined) {
+    return 100;
+  }
+
+  if (!Number.isSafeInteger(historyLimit) || historyLimit < 0) {
+    throw new TerminalEngineError('historyLimit must be a non-negative safe integer.');
+  }
+
+  return historyLimit;
 }
 
 function formatCommandLabel(command: RegisteredCommand): string {

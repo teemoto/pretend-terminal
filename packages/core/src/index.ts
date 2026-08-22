@@ -31,6 +31,7 @@ export type {
   OutputTranscriptEntry,
   TerminalEngine,
   TerminalEngineState,
+  TerminalHistoryDirection,
   TerminalRunResult,
   TerminalStateListener,
   TerminalTranscriptEntry,

@@ -135,6 +135,7 @@ export interface TerminalConfig {
   readonly theme?: ThemeName | ThemeTokens;
   readonly themes?: Readonly<Record<string, ThemeTokens>>;
   readonly className?: string;
+  /** Maximum session-history entries to retain. Defaults to 100; zero disables retention. */
   readonly historyLimit?: number;
   readonly storage?: TerminalStorageConfig;
   /** Invoked after non-empty input is recorded, before the command resolves. */

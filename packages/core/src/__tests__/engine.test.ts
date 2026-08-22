@@ -19,6 +19,7 @@ describe('createTerminalEngine', () => {
     await expect(engine.run('  ABOUT  ')).resolves.toMatchObject({ status: 'executed' });
     expect(onCommand).toHaveBeenCalledWith('ABOUT');
     expect(engine.getState()).toEqual({
+      input: '',
       history: ['ABOUT'],
       isExecuting: false,
       transcript: [
@@ -129,6 +130,53 @@ describe('createTerminalEngine', () => {
     await expect(engine.run('clear')).resolves.toMatchObject({ status: 'cleared' });
     expect(engine.getState().transcript).toEqual([]);
     expect(engine.getState().history).toEqual(['help', 'history', 'clear']);
+  });
+
+  it('navigates retained session history and restores a draft after the newest entry', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      historyLimit: 2,
+      commands: [
+        { name: 'first', response: { type: 'text', value: 'First.' } },
+        { name: 'second', response: { type: 'text', value: 'Second.' } },
+      ],
+    });
+
+    await engine.run('first');
+    await engine.run('second');
+    engine.setInput('draft command');
+
+    expect(engine.navigateHistory('previous')).toBe('second');
+    expect(engine.navigateHistory('previous')).toBe('first');
+    expect(engine.navigateHistory('previous')).toBe('first');
+    expect(engine.navigateHistory('next')).toBe('second');
+    expect(engine.navigateHistory('next')).toBe('draft command');
+    expect(engine.getState().input).toBe('draft command');
+  });
+
+  it('retains duplicate entries, enforces the history limit, and resets browsing after input changes', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      historyLimit: 2,
+      commands: [{ name: 'echo', response: { type: 'text', value: 'Teemo.' } }],
+    });
+
+    await engine.run('echo');
+    await engine.run('echo');
+    await engine.run('echo');
+    expect(engine.getState().history).toEqual(['echo', 'echo']);
+
+    engine.navigateHistory('previous');
+    engine.setInput('fresh input');
+    expect(engine.navigateHistory('next')).toBe('fresh input');
+    await engine.run('echo');
+    expect(engine.getState().input).toBe('');
+  });
+
+  it('rejects an invalid history limit at initialization', () => {
+    expect(() => createTerminalEngine({ historyLimit: -1 })).toThrow(
+      new TerminalEngineError('historyLimit must be a non-negative safe integer.'),
+    );
   });
 
   it('supports subscription cleanup and protects destroyed engines', () => {

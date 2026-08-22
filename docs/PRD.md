@@ -85,6 +85,8 @@ Both packages use TypeScript, publish ESM builds, and expose their relevant type
 - **Ctrl/Cmd + L:** clear visible terminal output.
 - **Escape:** no required behavior in v1.
 
+Command history retains submitted commands in chronological order, including duplicates. It keeps up to `historyLimit` entries (100 by default; `0` disables retention). When a visitor begins browsing history, Pretend Terminal preserves their current draft; Arrow Down restores that draft after the newest history entry. Editing input or submitting a command resets the history-navigation position.
+
 ### 8.3 Commands and configuration
 
 Every command defines exactly one execution form: a static `response` or a JavaScript/TypeScript `handler`. It may also define:
@@ -113,7 +115,7 @@ The core package includes `help`, `clear`, and `history`.
 - A consumer command with the same name replaces its built-in counterpart.
 - Default `help` is generated from all active, described commands.
 - `clear` clears the visible output but does not delete persisted history.
-- `history` shows the current session’s command history.
+- `history` shows the current session’s retained command history, oldest first, with one-based numbering.
 
 ### 8.5 Output model
 
