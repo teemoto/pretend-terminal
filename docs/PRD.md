@@ -58,10 +58,10 @@ They add dynamic commands that call their own approved application APIs, navigat
 
 ## 7. Package plan
 
-| Package | Purpose |
-| --- | --- |
-| `@pretend-terminal/core` | Framework-independent engine, types, built-in commands, themes, and a vanilla-JS mounting API. |
-| `@pretend-terminal/react` | React component and hooks backed by `@pretend-terminal/core`. |
+| Package                   | Purpose                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `@pretend-terminal/core`  | Framework-independent engine, types, built-in commands, themes, and a vanilla-JS mounting API. |
+| `@pretend-terminal/react` | React component and hooks backed by `@pretend-terminal/core`.                                  |
 
 Both packages use TypeScript, publish ESM builds, and expose their relevant type definitions. The React package depends on a compatible core version rather than reimplementing command behavior.
 
@@ -119,14 +119,14 @@ The core package includes `help`, `clear`, and `history`.
 
 v1 supports structured output only:
 
-| Type | Intended use |
-| --- | --- |
-| `text` | A single plain text response. |
-| `lines` | Multiple lines of text. |
-| `success`, `error`, `muted`, `accent` | Semantically styled text. |
-| `table` | Small label/value or tabular data. |
-| `link` | A labelled link with a URL. |
-| `ascii` | Preformatted ASCII art or code-like text. |
+| Type                                  | Intended use                              |
+| ------------------------------------- | ----------------------------------------- |
+| `text`                                | A single plain text response.             |
+| `lines`                               | Multiple lines of text.                   |
+| `success`, `error`, `muted`, `accent` | Semantically styled text.                 |
+| `table`                               | Small label/value or tabular data.        |
+| `link`                                | A labelled link with a URL.               |
+| `ascii`                               | Preformatted ASCII art or code-like text. |
 
 Implementations must safely render strings as text. Raw HTML and Markdown are not accepted as v1 output types.
 

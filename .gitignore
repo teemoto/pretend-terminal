@@ -1,5 +1,16 @@
 # Private working notes for the eventual build retrospective/article.
 docs/BUILDING_JOURNAL.md
+docs/PROJECT_TRACKER.md
 
 # Local collaboration guidance for agents working in this repository.
 AGENTS.md
+
+# Dependencies, generated artifacts, and local environment files.
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.DS_Store

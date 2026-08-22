@@ -97,7 +97,10 @@ The primary API is a configuration object. Static configurations can live in a J
       "description": "Show contact details",
       "response": {
         "type": "table",
-        "rows": [["Email", "teemo@example.com"], ["GitHub", "github.com/teemo"]]
+        "rows": [
+          ["Email", "teemo@example.com"],
+          ["GitHub", "github.com/teemo"]
+        ]
       }
     }
   ]
