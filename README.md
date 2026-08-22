@@ -1,5 +1,7 @@
 # Pretend Terminal
 
+[![CI](https://github.com/teemoto/pretend-terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/teemoto/pretend-terminal/actions/workflows/ci.yml)
+
 **A safe, configurable pseudo-terminal for the web.**
 
 Pretend Terminal lets people add a terminal-inspired interface to a website without embedding a real shell, server execution, or unsafe HTML rendering. It is designed for portfolios, documentation sites, product demos, onboarding flows, and playful developer experiences.
