@@ -87,7 +87,7 @@ Both packages use TypeScript, publish ESM builds, and expose their relevant type
 
 ### 8.3 Commands and configuration
 
-Every command may define:
+Every command defines exactly one execution form: a static `response` or a JavaScript/TypeScript `handler`. It may also define:
 
 - A required `name`.
 - Optional `aliases`.
@@ -185,7 +185,7 @@ type Command = {
   aliases?: string[];
   description?: string;
   response?: TerminalOutput;
-  handler?: () => TerminalOutput | Promise<TerminalOutput>;
+  handler?: (context: CommandHandlerContext) => TerminalOutput | Promise<TerminalOutput>;
 };
 ```
 
