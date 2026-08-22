@@ -27,6 +27,15 @@ export {
 export { createTerminalEngine, TerminalEngineError } from './engine.js';
 
 export {
+  BUILT_IN_THEMES,
+  DEFAULT_THEME_NAME,
+  resolveTheme,
+  ThemeResolutionError,
+} from './themes.js';
+
+export type { ResolvedTerminalTheme, ResolvedThemeTokens, TerminalThemeInput } from './themes.js';
+
+export {
   createBrowserStorageAdapter,
   createMemoryStorageAdapter,
   createSafeStorageAdapter,

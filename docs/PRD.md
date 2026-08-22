@@ -139,6 +139,7 @@ Implementations must safely render strings as text. Raw HTML and Markdown are no
 - Include the `default`, `dracula`, `matrix`, `amber`, and `light` theme presets.
 - Define themes through semantic CSS variables, including background, surface, text, muted text, prompt segments, accent, success, error, border, and font family tokens.
 - Accept a preset name or a custom theme-token object.
+- Resolve custom token objects and named custom themes against the complete default token set; reject unknown named themes rather than silently changing appearance.
 - Allow consumers to override CSS variables in their own stylesheet.
 - Allow consumer-supplied class names on the root terminal element.
 - Ship a standalone CSS entry point; do not require Tailwind, CSS-in-JS, or a UI framework.

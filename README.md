@@ -129,7 +129,7 @@ For application behavior beyond static content, commands may provide a handler:
 
 ## Theming
 
-Themes will be built from semantic CSS variables, so a site can override individual tokens without recreating every style.
+The core already resolves the `default`, `dracula`, `matrix`, `amber`, and `light` presets into semantic tokens. A renderer will apply those tokens as CSS variables, so a site can override individual values without recreating every style.
 
 ```css
 .my-terminal {

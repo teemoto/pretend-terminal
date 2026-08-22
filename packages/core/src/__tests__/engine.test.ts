@@ -27,6 +27,7 @@ describe('createTerminalEngine', () => {
     expect(engine.getState()).toEqual({
       input: '',
       completionSuggestions: [],
+      theme: expect.objectContaining({ name: 'default' }),
       history: ['ABOUT'],
       isExecuting: false,
       transcript: [
@@ -307,6 +308,23 @@ describe('createTerminalEngine', () => {
       command: { name: 'about', aliases: ['whoami'], description: 'Learn about Teemo.' },
     });
     expect(engine.getState().completionSuggestions).toEqual([]);
+  });
+
+  it('exposes the configured theme and updates it without clearing terminal state', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      theme: 'matrix',
+      commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+    });
+
+    await engine.run('about');
+    expect(engine.getState().theme.name).toBe('matrix');
+
+    engine.setTheme({ accent: '#9acd32' });
+    expect(engine.getState()).toMatchObject({
+      history: ['about'],
+      theme: { name: 'custom', tokens: { accent: '#9acd32' } },
+    });
   });
 
   it('exposes ordered active suggestions for ambiguous prefixes and leaves zero matches unchanged', () => {

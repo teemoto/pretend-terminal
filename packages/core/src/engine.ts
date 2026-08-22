@@ -6,6 +6,7 @@ import {
   type RegisteredCommand,
 } from './registry.js';
 import { createTerminalStorageKey, type TerminalStorageAdapter } from './storage.js';
+import { resolveTheme, type ResolvedTerminalTheme, type TerminalThemeInput } from './themes.js';
 import type {
   CommandHandlerContext,
   TerminalConfig,
@@ -34,6 +35,8 @@ export interface TerminalEngineState {
   readonly input: string;
   /** Ordered matches made available after a non-unique completion attempt. */
   readonly completionSuggestions: readonly TerminalCompletionSuggestion[];
+  /** The current fully resolved theme for a renderer to apply. */
+  readonly theme: ResolvedTerminalTheme;
   readonly transcript: readonly TerminalTranscriptEntry[];
   readonly history: readonly string[];
   readonly isExecuting: boolean;
@@ -81,6 +84,7 @@ export interface TerminalEngine {
   setInput(input: string): void;
   navigateHistory(direction: TerminalHistoryDirection): string;
   complete(): TerminalCompletionResult;
+  setTheme(theme: TerminalThemeInput): void;
   run(input: string): Promise<TerminalRunResult>;
   clear(): void;
   destroy(): void;
@@ -110,6 +114,7 @@ export function createTerminalEngine(
   const listeners = new Set<TerminalStateListener>();
   let inputValue = '';
   let completionSuggestions: TerminalCompletionSuggestion[] = [];
+  let activeTheme = resolveTheme(config.theme, config.themes);
   let historyCursor: number | undefined;
   let historyDraft = '';
   let isExecuting = false;
@@ -127,6 +132,7 @@ export function createTerminalEngine(
     return {
       input: inputValue,
       completionSuggestions: [...completionSuggestions],
+      theme: { name: activeTheme.name, tokens: { ...activeTheme.tokens } },
       transcript: [...transcript],
       history: [...history],
       isExecuting,
@@ -227,6 +233,12 @@ export function createTerminalEngine(
     completionSuggestions = suggestions;
     emit();
     return { status: 'suggestions', input: inputValue, suggestions: [...suggestions] };
+  }
+
+  function setTheme(theme: TerminalThemeInput): void {
+    assertActive();
+    activeTheme = resolveTheme(theme, config.themes);
+    emit();
   }
 
   async function run(input: string): Promise<TerminalRunResult> {
@@ -376,6 +388,7 @@ export function createTerminalEngine(
     setInput,
     navigateHistory,
     complete,
+    setTheme,
     run,
     clear,
     destroy,
