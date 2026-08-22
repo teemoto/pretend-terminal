@@ -137,6 +137,8 @@ export interface TerminalConfig {
   readonly className?: string;
   readonly historyLimit?: number;
   readonly storage?: TerminalStorageConfig;
+  /** Invoked after non-empty input is recorded, before the command resolves. */
   readonly onCommand?: (command: string) => void;
+  /** Invoked only when non-empty input does not match an active command. */
   readonly onUnknownCommand?: (command: string) => void;
 }

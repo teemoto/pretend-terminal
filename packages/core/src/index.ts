@@ -24,6 +24,18 @@ export {
   normalizeCommand,
 } from './registry.js';
 
+export { createTerminalEngine, TerminalEngineError } from './engine.js';
+
+export type {
+  CommandTranscriptEntry,
+  OutputTranscriptEntry,
+  TerminalEngine,
+  TerminalEngineState,
+  TerminalRunResult,
+  TerminalStateListener,
+  TerminalTranscriptEntry,
+} from './engine.js';
+
 export type {
   BuiltInCommandDefinition,
   BuiltInCommandName,
