@@ -42,6 +42,7 @@ export type {
   TerminalCompletionResult,
   TerminalCompletionSuggestion,
   TerminalEngine,
+  TerminalEngineOptions,
   TerminalEngineState,
   TerminalHistoryDirection,
   TerminalRunResult,

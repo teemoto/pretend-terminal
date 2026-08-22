@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createTerminalEngine, TerminalEngineError, type TerminalOutputBlock } from '../index.js';
+import {
+  createMemoryStorageAdapter,
+  createTerminalEngine,
+  createTerminalStorageKey,
+  TerminalEngineError,
+  type TerminalOutputBlock,
+} from '../index.js';
 
 describe('createTerminalEngine', () => {
   it('executes static commands and records an echo plus structured output', async () => {
@@ -222,6 +228,63 @@ describe('createTerminalEngine', () => {
     expect(() => createTerminalEngine({ historyLimit: -1 })).toThrow(
       new TerminalEngineError('historyLimit must be a non-negative safe integer.'),
     );
+  });
+
+  it('restores validated persisted history and writes only retained history after submission', async () => {
+    const storage = createMemoryStorageAdapter();
+    const historyKey = createTerminalStorageKey('teemo-terminal', 'history');
+    storage.set(historyKey, JSON.stringify(['scout', 'map', 'mushroom']));
+    const engine = createTerminalEngine(
+      {
+        includeBuiltIns: false,
+        historyLimit: 2,
+        storage: { enabled: true, key: 'teemo-terminal', persistHistory: true },
+        commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+      },
+      { storage },
+    );
+
+    expect(engine.getState().history).toEqual(['map', 'mushroom']);
+    await engine.run('about');
+
+    expect(storage.get(historyKey)).toBe(JSON.stringify(['mushroom', 'about']));
+    expect(engine.getState().transcript).toHaveLength(2);
+    engine.clear();
+    expect(storage.get(historyKey)).toBe(JSON.stringify(['mushroom', 'about']));
+  });
+
+  it('does not touch storage when history persistence is disabled or invalid', async () => {
+    const storage = { get: vi.fn(), set: vi.fn(), remove: vi.fn() };
+    const engine = createTerminalEngine(
+      {
+        includeBuiltIns: false,
+        storage: { enabled: false },
+        commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+      },
+      { storage },
+    );
+
+    await engine.run('about');
+
+    expect(storage.get).not.toHaveBeenCalled();
+    expect(storage.set).not.toHaveBeenCalled();
+    expect(storage.remove).not.toHaveBeenCalled();
+  });
+
+  it('ignores malformed persisted history without interrupting the terminal', async () => {
+    const storage = createMemoryStorageAdapter();
+    storage.set(createTerminalStorageKey('teemo-terminal', 'history'), '{not-json');
+    const engine = createTerminalEngine(
+      {
+        includeBuiltIns: false,
+        storage: { enabled: true, key: 'teemo-terminal', persistHistory: true },
+        commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+      },
+      { storage },
+    );
+
+    expect(engine.getState().history).toEqual([]);
+    await expect(engine.run('about')).resolves.toMatchObject({ status: 'executed' });
   });
 
   it('completes a unique canonical-name or alias prefix to the command name', () => {

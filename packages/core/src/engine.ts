@@ -5,6 +5,7 @@ import {
   type RegisteredBuiltInCommand,
   type RegisteredCommand,
 } from './registry.js';
+import { createTerminalStorageKey, type TerminalStorageAdapter } from './storage.js';
 import type {
   CommandHandlerContext,
   TerminalConfig,
@@ -85,17 +86,27 @@ export interface TerminalEngine {
   destroy(): void;
 }
 
+/** Environment-provided dependencies for a headless terminal engine. */
+export interface TerminalEngineOptions {
+  /** An adapter created by a renderer after browser mount, when persistence is desired. */
+  readonly storage?: TerminalStorageAdapter;
+}
+
 /** Thrown when an operation is attempted after an engine is destroyed. */
 export class TerminalEngineError extends Error {
   override readonly name = 'TerminalEngineError';
 }
 
 /** Creates a browser-independent terminal engine from consumer configuration. */
-export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngine {
+export function createTerminalEngine(
+  config: TerminalConfig = {},
+  options: TerminalEngineOptions = {},
+): TerminalEngine {
   const registry = createCommandRegistry(config);
   const historyLimit = resolveHistoryLimit(config.historyLimit);
+  const persistedHistory = resolvePersistedHistory(config, options.storage, historyLimit);
   const transcript: TerminalTranscriptEntry[] = [];
-  const history: string[] = [];
+  const history: string[] = [...persistedHistory.history];
   const listeners = new Set<TerminalStateListener>();
   let inputValue = '';
   let completionSuggestions: TerminalCompletionSuggestion[] = [];
@@ -325,6 +336,19 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
   function recordHistory(entry: string): void {
     history.push(entry);
     history.splice(0, Math.max(0, history.length - historyLimit));
+    persistHistory();
+  }
+
+  function persistHistory(): void {
+    if (!persistedHistory.storageKey || !options.storage) {
+      return;
+    }
+
+    try {
+      options.storage.set(persistedHistory.storageKey, JSON.stringify(history));
+    } catch {
+      // Persistence is an optional enhancement; command execution must continue.
+    }
   }
 
   function resetHistoryNavigation(): void {
@@ -376,6 +400,39 @@ function resolveHistoryLimit(historyLimit: number | undefined): number {
   }
 
   return historyLimit;
+}
+
+function resolvePersistedHistory(
+  config: TerminalConfig,
+  storage: TerminalStorageAdapter | undefined,
+  historyLimit: number,
+): { history: string[]; storageKey?: string } {
+  if (config.storage?.enabled !== true || config.storage.persistHistory !== true || !storage) {
+    return { history: [] };
+  }
+
+  const consumerStorageKey = config.storage.key.trim();
+  if (!consumerStorageKey) {
+    return { history: [] };
+  }
+
+  const storageKey = createTerminalStorageKey(consumerStorageKey, 'history');
+
+  try {
+    const serialized = storage.get(storageKey);
+    if (!serialized) {
+      return { history: [], storageKey };
+    }
+
+    const parsed: unknown = JSON.parse(serialized);
+    if (!Array.isArray(parsed) || !parsed.every((entry) => typeof entry === 'string')) {
+      return { history: [], storageKey };
+    }
+
+    return { history: parsed.slice(-historyLimit), storageKey };
+  } catch {
+    return { history: [], storageKey };
+  }
 }
 
 function formatCommandLabel(command: RegisteredCommand): string {
