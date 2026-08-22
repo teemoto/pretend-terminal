@@ -29,6 +29,8 @@ export { createTerminalEngine, TerminalEngineError } from './engine.js';
 export type {
   CommandTranscriptEntry,
   OutputTranscriptEntry,
+  TerminalCompletionResult,
+  TerminalCompletionSuggestion,
   TerminalEngine,
   TerminalEngineState,
   TerminalHistoryDirection,

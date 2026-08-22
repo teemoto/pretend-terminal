@@ -87,6 +87,8 @@ Both packages use TypeScript, publish ESM builds, and expose their relevant type
 
 Command history retains submitted commands in chronological order, including duplicates. It keeps up to `historyLimit` entries (100 by default; `0` disables retention). When a visitor begins browsing history, Pretend Terminal preserves their current draft; Arrow Down restores that draft after the newest history entry. Editing input or submitting a command resets the history-navigation position.
 
+Tab completion matches active command names and aliases by a case-insensitive, trimmed prefix. One match replaces input with the command’s canonical name; multiple matches leave input unchanged and expose active commands in registry order; zero matches leave input unchanged. v1 does not apply common-prefix completion.
+
 ### 8.3 Commands and configuration
 
 Every command defines exactly one execution form: a static `response` or a JavaScript/TypeScript `handler`. It may also define:

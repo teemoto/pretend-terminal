@@ -31,6 +31,8 @@ export type TerminalTranscriptEntry = CommandTranscriptEntry | OutputTranscriptE
 export interface TerminalEngineState {
   /** The current renderer-controlled input value. */
   readonly input: string;
+  /** Ordered matches made available after a non-unique completion attempt. */
+  readonly completionSuggestions: readonly TerminalCompletionSuggestion[];
   readonly transcript: readonly TerminalTranscriptEntry[];
   readonly history: readonly string[];
   readonly isExecuting: boolean;
@@ -46,6 +48,27 @@ export type TerminalRunResult =
 /** Direction used to navigate a terminal's session history. */
 export type TerminalHistoryDirection = 'previous' | 'next';
 
+/** Renderer-neutral metadata for a command offered by Tab completion. */
+export interface TerminalCompletionSuggestion {
+  readonly name: string;
+  readonly aliases: readonly string[];
+  readonly description?: string;
+}
+
+/** Result of attempting to complete the engine's current input. */
+export type TerminalCompletionResult =
+  | { readonly status: 'none'; readonly input: string }
+  | {
+      readonly status: 'completed';
+      readonly input: string;
+      readonly command: TerminalCompletionSuggestion;
+    }
+  | {
+      readonly status: 'suggestions';
+      readonly input: string;
+      readonly suggestions: readonly TerminalCompletionSuggestion[];
+    };
+
 /** Listener notified whenever the engine state changes. */
 export type TerminalStateListener = (state: TerminalEngineState) => void;
 
@@ -56,6 +79,7 @@ export interface TerminalEngine {
   subscribe(listener: TerminalStateListener): () => void;
   setInput(input: string): void;
   navigateHistory(direction: TerminalHistoryDirection): string;
+  complete(): TerminalCompletionResult;
   run(input: string): Promise<TerminalRunResult>;
   clear(): void;
   destroy(): void;
@@ -74,6 +98,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
   const history: string[] = [];
   const listeners = new Set<TerminalStateListener>();
   let inputValue = '';
+  let completionSuggestions: TerminalCompletionSuggestion[] = [];
   let historyCursor: number | undefined;
   let historyDraft = '';
   let isExecuting = false;
@@ -90,6 +115,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
 
     return {
       input: inputValue,
+      completionSuggestions: [...completionSuggestions],
       transcript: [...transcript],
       history: [...history],
       isExecuting,
@@ -115,6 +141,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
   function clear(): void {
     assertActive();
     transcript.length = 0;
+    clearCompletionSuggestions();
     emit();
   }
 
@@ -122,6 +149,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     assertActive();
     inputValue = input;
     resetHistoryNavigation();
+    clearCompletionSuggestions();
     emit();
   }
 
@@ -161,6 +189,35 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     return inputValue;
   }
 
+  function complete(): TerminalCompletionResult {
+    assertActive();
+
+    const normalizedInput = normalizeCommand(inputValue);
+    const matches = registry.commands.filter(
+      (command) =>
+        command.normalizedName.startsWith(normalizedInput) ||
+        command.normalizedAliases.some((alias) => alias.startsWith(normalizedInput)),
+    );
+    const suggestions = matches.map(toCompletionSuggestion);
+
+    if (suggestions.length === 0) {
+      clearCompletionSuggestions();
+      emit();
+      return { status: 'none', input: inputValue };
+    }
+
+    if (suggestions.length === 1) {
+      inputValue = suggestions[0].name;
+      clearCompletionSuggestions();
+      emit();
+      return { status: 'completed', input: inputValue, command: suggestions[0] };
+    }
+
+    completionSuggestions = suggestions;
+    emit();
+    return { status: 'suggestions', input: inputValue, suggestions: [...suggestions] };
+  }
+
   async function run(input: string): Promise<TerminalRunResult> {
     assertActive();
 
@@ -177,6 +234,7 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     const command = registry.get(input);
     inputValue = '';
     resetHistoryNavigation();
+    clearCompletionSuggestions();
     recordHistory(submittedInput);
     transcript.push({ kind: 'command', value: submittedInput });
     config.onCommand?.(submittedInput);
@@ -274,6 +332,10 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     historyDraft = '';
   }
 
+  function clearCompletionSuggestions(): void {
+    completionSuggestions = [];
+  }
+
   function destroy(): void {
     if (destroyed) {
       return;
@@ -283,7 +345,25 @@ export function createTerminalEngine(config: TerminalConfig = {}): TerminalEngin
     destroyed = true;
   }
 
-  return { registry, getState, subscribe, setInput, navigateHistory, run, clear, destroy };
+  return {
+    registry,
+    getState,
+    subscribe,
+    setInput,
+    navigateHistory,
+    complete,
+    run,
+    clear,
+    destroy,
+  };
+}
+
+function toCompletionSuggestion(command: RegisteredCommand): TerminalCompletionSuggestion {
+  return {
+    name: command.name,
+    aliases: command.aliases,
+    description: command.description,
+  };
 }
 
 function resolveHistoryLimit(historyLimit: number | undefined): number {

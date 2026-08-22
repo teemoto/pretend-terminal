@@ -20,6 +20,7 @@ describe('createTerminalEngine', () => {
     expect(onCommand).toHaveBeenCalledWith('ABOUT');
     expect(engine.getState()).toEqual({
       input: '',
+      completionSuggestions: [],
       history: ['ABOUT'],
       isExecuting: false,
       transcript: [
@@ -177,6 +178,67 @@ describe('createTerminalEngine', () => {
     expect(() => createTerminalEngine({ historyLimit: -1 })).toThrow(
       new TerminalEngineError('historyLimit must be a non-negative safe integer.'),
     );
+  });
+
+  it('completes a unique canonical-name or alias prefix to the command name', () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'about',
+          aliases: ['whoami'],
+          description: 'Learn about Teemo.',
+          response: { type: 'text', value: 'Captain Teemo on duty.' },
+        },
+      ],
+    });
+
+    engine.setInput('WH');
+    expect(engine.complete()).toEqual({
+      status: 'completed',
+      input: 'about',
+      command: { name: 'about', aliases: ['whoami'], description: 'Learn about Teemo.' },
+    });
+    expect(engine.getState().completionSuggestions).toEqual([]);
+  });
+
+  it('exposes ordered active suggestions for ambiguous prefixes and leaves zero matches unchanged', () => {
+    const engine = createTerminalEngine({
+      commands: [
+        { name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } },
+        { name: 'archive', response: { type: 'text', value: 'Archive.' } },
+      ],
+    });
+
+    engine.setInput('a');
+    expect(engine.complete()).toEqual({
+      status: 'suggestions',
+      input: 'a',
+      suggestions: [
+        { name: 'about', aliases: [], description: undefined },
+        { name: 'archive', aliases: [], description: undefined },
+      ],
+    });
+    expect(engine.getState().input).toBe('a');
+
+    engine.setInput('missing');
+    expect(engine.complete()).toEqual({ status: 'none', input: 'missing' });
+    expect(engine.getState().completionSuggestions).toEqual([]);
+  });
+
+  it('uses only active commands for completion', () => {
+    const engine = createTerminalEngine({
+      commands: [
+        { name: 'help', response: { type: 'text', value: 'Teemo help.' } },
+        { name: 'hello', response: { type: 'text', value: 'Hello.' } },
+      ],
+    });
+
+    engine.setInput('he');
+    expect(engine.complete()).toMatchObject({
+      status: 'suggestions',
+      suggestions: [{ name: 'help' }, { name: 'hello' }],
+    });
   });
 
   it('supports subscription cleanup and protects destroyed engines', () => {
