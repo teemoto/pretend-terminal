@@ -37,7 +37,7 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   root.setAttribute('aria-label', config.ariaLabel ?? 'Pretend terminal');
 
   const output = document.createElement('div');
-  output.className = 'pt-output';
+  output.className = 'pt-output pt-output-log';
   output.dataset.ptOutput = '';
   output.setAttribute('aria-live', 'polite');
 
@@ -74,7 +74,7 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   let renderedTranscriptLength = -1;
   const unsubscribe = engine.subscribe((state) => {
     for (const [token, value] of Object.entries(state.theme.tokens)) {
-      root.style.setProperty(`--pt-${toKebabCase(token)}`, value);
+      root.style.setProperty(`--pt-theme-${toKebabCase(token)}`, value);
     }
 
     output.replaceChildren(

@@ -43,6 +43,7 @@ Read the complete scope, constraints, and success criteria in the [v1 product re
 
 ```ts
 import { createTerminal } from '@pretend-terminal/core';
+import '@pretend-terminal/core/styles.css';
 
 createTerminal(document.querySelector('#terminal'), {
   prompt: 'visitor@site:~ $',
@@ -132,13 +133,22 @@ The core already resolves the `default`, `dracula`, `matrix`, `amber`, and `ligh
 
 ```css
 .my-terminal {
-  --pt-bg: #111827;
+  --pt-background: #111827;
   --pt-surface: #1f2937;
   --pt-text: #f9fafb;
   --pt-accent: #60a5fa;
   --pt-success: #34d399;
 }
 ```
+
+Public tokens are semantic, so overrides remain stable across theme palettes:
+
+| Tokens                                                                                  | Meaning                                      |
+| --------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `--pt-background`, `--pt-surface`, `--pt-text`, `--pt-muted`, `--pt-border`             | Terminal surfaces and standard text.         |
+| `--pt-prompt-user`, `--pt-prompt-host`, `--pt-prompt-path`, `--pt-prompt-symbol`        | Prompt segments for custom prompt renderers. |
+| `--pt-accent`, `--pt-success`, `--pt-error`                                             | Interactive, positive, and error states.     |
+| `--pt-font-family`, `--pt-font-size`, `--pt-line-height`, `--pt-radius`, `--pt-spacing` | Typography and layout scale.                 |
 
 ## Security model
 
