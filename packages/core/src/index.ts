@@ -26,6 +26,10 @@ export {
 
 export { createTerminalEngine, TerminalEngineError } from './engine.js';
 
+export { createTerminal, TerminalMountError } from './dom.js';
+
+export type { MountedTerminal, TerminalDomConfig } from './dom.js';
+
 export {
   BUILT_IN_THEMES,
   DEFAULT_THEME_NAME,

@@ -43,7 +43,6 @@ Read the complete scope, constraints, and success criteria in the [v1 product re
 
 ```ts
 import { createTerminal } from '@pretend-terminal/core';
-import '@pretend-terminal/core/styles.css';
 
 createTerminal(document.querySelector('#terminal'), {
   prompt: 'visitor@site:~ $',

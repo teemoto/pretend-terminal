@@ -144,6 +144,8 @@ Implementations must safely render strings as text. Raw HTML and Markdown are no
 - Allow consumer-supplied class names on the root terminal element.
 - Ship a standalone CSS entry point; do not require Tailwind, CSS-in-JS, or a UI framework.
 
+The vanilla renderer uses the stable `pt-` class prefix (`pt-terminal`, `pt-output`, `pt-prompt`, and `pt-input`) and exposes `data-pt-root`, `data-pt-output`, and `data-pt-input` as testing hooks. These attributes are not required styling hooks.
+
 ### 8.7 Persistence
 
 Persistence is opt-in and browser-only.
