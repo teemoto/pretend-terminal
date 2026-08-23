@@ -1,0 +1,46 @@
+:root {
+  color: #e5e7eb;
+  background: #080b10;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.demo-page {
+  width: min(100% - 2rem, 56rem);
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.demo-header {
+  margin-bottom: 1.5rem;
+}
+
+.demo-header h1,
+.demo-header p {
+  margin: 0;
+}
+
+.demo-header h1 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.eyebrow {
+  color: #7dd3fc;
+}
+
+.event-log {
+  color: #94a3b8;
+}
+
+.teemo-terminal {
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%);
+}
+
+@media (max-width: 36rem) {
+  .demo-page {
+    padding-top: 1.5rem;
+  }
+}

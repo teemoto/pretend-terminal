@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pretend Terminal — Vanilla example</title>
+  </head>
+  <body>
+    <main class="demo-page">
+      <header class="demo-header">
+        <div>
+          <p class="eyebrow">@pretend-terminal/core</p>
+          <h1>Vanilla JavaScript example</h1>
+          <p>Try <code>help</code>, <code>about</code>, or <code>status</code>.</p>
+        </div>
+        <div class="theme-controls" aria-label="Theme controls">
+          <button type="button" data-theme="amber">Amber</button>
+          <button type="button" data-theme="matrix">Matrix</button>
+          <button type="button" data-theme="dracula">Dracula</button>
+        </div>
+      </header>
+      <div id="terminal"></div>
+      <p class="event-log" aria-live="polite">No command submitted yet.</p>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

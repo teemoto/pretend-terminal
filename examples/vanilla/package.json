@@ -1,0 +1,12 @@
+{
+  "name": "@pretend-terminal/example-vanilla",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@pretend-terminal/core": "workspace:*"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@pretend-terminal/example-react",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@pretend-terminal/react": "workspace:*",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.8"
+  }
+}

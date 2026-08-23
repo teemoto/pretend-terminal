@@ -4,3 +4,6 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+# Corepack is the pinned pnpm entry point; do not invoke an ambient package-manager shim.
+verifyDepsBeforeRun: false

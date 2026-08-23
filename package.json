@@ -11,6 +11,8 @@
   "scripts": {
     "build": "corepack pnpm --recursive --if-present run build",
     "clean": "corepack pnpm --recursive --if-present run clean",
+    "dev:react": "corepack pnpm --filter @pretend-terminal/example-react dev",
+    "dev:vanilla": "corepack pnpm --filter @pretend-terminal/example-vanilla dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -33,6 +35,7 @@
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.47.0",
+    "vite": "^8.2.2",
     "vitest": "^4.0.16"
   }
 }

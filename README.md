@@ -37,6 +37,8 @@ npm install @pretend-terminal/react
 
 Read the complete scope, constraints, and success criteria in the [v1 product requirements document](docs/PRD.md).
 
+For local visual testing, the repository includes vanilla and React Vite examples. See the [manual test plan](docs/MANUAL_TEST_PLAN.md).
+
 ## Intended usage
 
 ### Vanilla JavaScript
