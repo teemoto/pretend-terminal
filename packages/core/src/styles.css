@@ -51,6 +51,7 @@
 }
 
 .pt-terminal[data-pt-fixed-height] .pt-output-log {
+  flex: 0 0 auto;
   min-height: 0;
   max-height: none;
   overflow: visible;
