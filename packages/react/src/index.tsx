@@ -35,6 +35,7 @@ export function PretendTerminal({
   const state = useTerminalState(engine);
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLElement>(null);
   const destroyTokenRef = useRef<{
     readonly engine: TerminalEngine;
     readonly token: object;
@@ -65,11 +66,19 @@ export function PretendTerminal({
   }, [initialConfig]);
 
   useEffect(() => {
-    const output = outputRef.current;
-    if (output) {
+    if (initialConfig.height) {
+      const root = rootRef.current;
+      if (root) {
+        root.scrollTop = root.scrollHeight;
+      }
+    } else {
+      const output = outputRef.current;
+      if (!output) {
+        return;
+      }
       output.scrollTop = output.scrollHeight;
     }
-  }, [state.transcript.length]);
+  }, [initialConfig.height, state.transcript.length]);
 
   useEffect(() => {
     const input = inputRef.current;
@@ -80,6 +89,7 @@ export function PretendTerminal({
 
   return (
     <section
+      ref={rootRef}
       className={['pt-terminal', className].filter(Boolean).join(' ')}
       data-pt-root=""
       data-pt-fixed-height={initialConfig.height ? '' : undefined}

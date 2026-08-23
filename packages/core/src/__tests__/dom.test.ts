@@ -26,13 +26,20 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
-  it('applies an optional fixed height so output can scroll within the terminal', () => {
+  it('uses the terminal as the scrolling container when a fixed height is configured', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, { height: '28rem' });
     const root = mount.querySelector<HTMLElement>('[data-pt-root]');
+    if (!root) {
+      throw new Error('Expected a terminal root.');
+    }
 
-    expect(root?.style.height).toBe('28rem');
-    expect(root?.hasAttribute('data-pt-fixed-height')).toBe(true);
+    expect(root.style.height).toBe('28rem');
+    expect(root.hasAttribute('data-pt-fixed-height')).toBe(true);
+    Object.defineProperty(root, 'scrollHeight', { configurable: true, value: 400 });
+
+    await terminal.run('help');
+    expect(root.scrollTop).toBe(400);
 
     terminal.destroy();
   });

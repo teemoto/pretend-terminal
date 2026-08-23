@@ -57,12 +57,27 @@ describe('PretendTerminal', () => {
     const root = createRoot(container);
 
     await act(async () => {
-      root.render(<PretendTerminal height="28rem" />);
+      root.render(
+        <PretendTerminal
+          height="28rem"
+          includeBuiltIns={false}
+          commands={[{ name: 'about', response: { type: 'text', value: 'Captain Teemo.' } }]}
+        />,
+      );
     });
 
     const terminal = container.querySelector<HTMLElement>('[data-pt-root]');
-    expect(terminal?.style.height).toBe('28rem');
-    expect(terminal?.hasAttribute('data-pt-fixed-height')).toBe(true);
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!terminal || !input) {
+      throw new Error('Expected a terminal root and input.');
+    }
+    expect(terminal.style.height).toBe('28rem');
+    expect(terminal.hasAttribute('data-pt-fixed-height')).toBe(true);
+    Object.defineProperty(terminal, 'scrollHeight', { configurable: true, value: 400 });
+
+    await type(input, 'about');
+    await press(input, 'Enter');
+    expect(terminal.scrollTop).toBe(400);
 
     await act(async () => root.unmount());
   });

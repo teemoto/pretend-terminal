@@ -98,7 +98,11 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
 
     if (renderedTranscriptLength !== state.transcript.length) {
       renderedTranscriptLength = state.transcript.length;
-      output.scrollTop = output.scrollHeight;
+      if (config.height) {
+        root.scrollTop = root.scrollHeight;
+      } else {
+        output.scrollTop = output.scrollHeight;
+      }
     }
   });
   let destroyed = false;

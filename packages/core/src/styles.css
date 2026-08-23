@@ -53,6 +53,13 @@
 .pt-terminal[data-pt-fixed-height] .pt-output-log {
   min-height: 0;
   max-height: none;
+  overflow: visible;
+}
+
+.pt-terminal[data-pt-fixed-height] {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .pt-command,
