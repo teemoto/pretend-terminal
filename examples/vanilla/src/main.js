@@ -13,6 +13,7 @@ if (!mount || !eventLog) {
 const terminal = createTerminal(mount, {
   ariaLabel: 'Teemo portfolio terminal',
   prompt: 'teemo@portfolio:~ $',
+  height: '30rem',
   theme: 'amber',
   storage: {
     enabled: true,

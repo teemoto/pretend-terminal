@@ -7,6 +7,7 @@ import './style.css';
 
 const terminalConfig = {
   prompt: 'teemo@portfolio:~ $',
+  height: '30rem',
   theme: {
     background: '#12151b',
     surface: '#1c212b',

@@ -49,6 +49,7 @@ import '@pretend-terminal/core/styles.css';
 
 createTerminal(document.querySelector('#terminal'), {
   prompt: 'visitor@site:~ $',
+  height: '28rem',
   theme: 'dracula',
   commands: [
     {
@@ -62,6 +63,8 @@ createTerminal(document.querySelector('#terminal'), {
   ],
 });
 ```
+
+Set `height` to any CSS length when you want the terminal to stay a fixed size and scroll its transcript internally. Omit it for a naturally sized terminal.
 
 ### React
 

@@ -17,7 +17,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "test": "corepack pnpm --recursive --if-present run test",
-    "typecheck": "corepack pnpm --recursive --if-present run typecheck"
+    "typecheck": "corepack pnpm --filter @pretend-terminal/core build && corepack pnpm --recursive --if-present run typecheck"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",

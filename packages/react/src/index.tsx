@@ -36,18 +36,44 @@ export function PretendTerminal({
   }
   const engine = engineRef.current;
   const state = useTerminalState(engine);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => engine.destroy(), [engine]);
+
+  useEffect(() => {
+    const output = outputRef.current;
+    if (output) {
+      output.scrollTop = output.scrollHeight;
+    }
+  }, [state.transcript.length]);
+
+  useEffect(() => {
+    const input = inputRef.current;
+    if (input && document.activeElement === input) {
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  }, [state.input]);
 
   return (
     <section
       className={['pt-terminal', className].filter(Boolean).join(' ')}
       data-pt-root=""
+      data-pt-fixed-height={initialConfig.height ? '' : undefined}
       role="region"
       aria-label={ariaLabel}
-      style={{ ...toThemeStyle(state), ...style }}
+      style={{ ...toThemeStyle(state), height: initialConfig.height, ...style }}
+      onClick={(event) => {
+        if (
+          event.target instanceof Element &&
+          event.target.closest('a, button, input, select, textarea')
+        ) {
+          return;
+        }
+        inputRef.current?.focus();
+      }}
     >
-      <div className="pt-output pt-output-log" data-pt-output="" aria-live="polite">
+      <div ref={outputRef} className="pt-output pt-output-log" data-pt-output="" aria-live="polite">
         {state.transcript.map((entry, index) => (
           <TranscriptEntry
             key={index}
@@ -69,6 +95,7 @@ export function PretendTerminal({
       <label className="pt-input-row">
         <span className="pt-prompt">{initialConfig.prompt ?? 'visitor@pretend-terminal:~ $'}</span>
         <input
+          ref={inputRef}
           className="pt-input"
           data-pt-input=""
           type="text"
@@ -78,6 +105,34 @@ export function PretendTerminal({
           spellCheck={false}
           aria-label="Terminal command"
           onChange={(event) => engine.setInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              void engine.run(state.input);
+              return;
+            }
+            if (event.key === 'ArrowUp' && state.history.length > 0) {
+              event.preventDefault();
+              engine.navigateHistory('previous');
+              return;
+            }
+            if (event.key === 'ArrowDown' && state.history.length > 0) {
+              event.preventDefault();
+              engine.navigateHistory('next');
+              return;
+            }
+            if (event.key === 'Tab') {
+              const completion = engine.complete();
+              if (completion.status !== 'none') {
+                event.preventDefault();
+              }
+              return;
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'l') {
+              event.preventDefault();
+              engine.clear();
+            }
+          }}
         />
       </label>
     </section>

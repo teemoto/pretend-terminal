@@ -26,6 +26,17 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('applies an optional fixed height so output can scroll within the terminal', () => {
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, { height: '28rem' });
+    const root = mount.querySelector<HTMLElement>('[data-pt-root]');
+
+    expect(root?.style.height).toBe('28rem');
+    expect(root?.hasAttribute('data-pt-fixed-height')).toBe(true);
+
+    terminal.destroy();
+  });
+
   it('renders configured text as text rather than HTML', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, {

@@ -130,6 +130,8 @@ export type Command = StaticCommand | DynamicCommand;
 /** Configuration shared by the future vanilla-JS and React renderers. */
 export interface TerminalConfig {
   readonly prompt?: string;
+  /** Optional CSS height (for example, `28rem` or `480px`) that makes output scroll within the terminal. */
+  readonly height?: string;
   readonly commands?: readonly Command[];
   readonly includeBuiltIns?: boolean;
   readonly theme?: ThemeName | ThemeTokens;

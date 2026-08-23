@@ -21,6 +21,7 @@
 .pt-terminal {
   box-sizing: border-box;
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   gap: calc(var(--pt-spacing) * 0.75);
   width: 100%;
   padding: var(--pt-spacing);
@@ -47,6 +48,11 @@
   max-height: 32rem;
   overflow: auto;
   overflow-wrap: anywhere;
+}
+
+.pt-terminal[data-pt-fixed-height] .pt-output-log {
+  min-height: 0;
+  max-height: none;
 }
 
 .pt-command,
@@ -79,12 +85,6 @@
   border: 0;
   outline: 0;
   font: inherit;
-}
-
-.pt-input:focus-visible {
-  outline: 2px solid var(--pt-accent);
-  outline-offset: 3px;
-  border-radius: 0.125rem;
 }
 
 .pt-output-lines,

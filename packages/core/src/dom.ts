@@ -33,6 +33,10 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   const root = document.createElement('section');
   root.className = ['pt-terminal', config.className].filter(Boolean).join(' ');
   root.dataset.ptRoot = '';
+  if (config.height) {
+    root.dataset.ptFixedHeight = '';
+    root.style.height = config.height;
+  }
   root.setAttribute('role', 'region');
   root.setAttribute('aria-label', config.ariaLabel ?? 'Pretend terminal');
 
