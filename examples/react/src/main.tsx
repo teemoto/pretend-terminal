@@ -8,6 +8,11 @@ import './style.css';
 const terminalConfig = {
   prompt: 'teemo@portfolio:~ $',
   height: '30rem',
+  storage: {
+    enabled: true,
+    key: 'pretend-terminal-react-example',
+    persistHistory: true,
+  },
   theme: {
     background: '#12151b',
     surface: '#1c212b',

@@ -2,7 +2,10 @@
 
 import { act, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
+
+import { createTerminalStorageKey } from '@pretend-terminal/core';
 
 import { PretendTerminal } from '../index.js';
 
@@ -62,6 +65,64 @@ describe('PretendTerminal', () => {
     expect(terminal?.hasAttribute('data-pt-fixed-height')).toBe(true);
 
     await act(async () => root.unmount());
+  });
+
+  it('hydrates opt-in history and theme persistence only after client mount', async () => {
+    const storageKey = 'teemo-react-hydration';
+    window.localStorage.setItem(
+      createTerminalStorageKey(storageKey, 'history'),
+      JSON.stringify(['about']),
+    );
+    window.localStorage.setItem(
+      createTerminalStorageKey(storageKey, 'theme'),
+      JSON.stringify('matrix'),
+    );
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          theme="dracula"
+          storage={{ enabled: true, key: storageKey, persistHistory: true, persistTheme: true }}
+          commands={[{ name: 'about', response: { type: 'text', value: 'Captain Teemo.' } }]}
+        />,
+      );
+    });
+
+    const terminal = container.querySelector<HTMLElement>('[data-pt-root]');
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!terminal || !input) {
+      throw new Error('Expected a terminal root and input.');
+    }
+    expect(terminal.style.getPropertyValue('--pt-theme-background')).toBe('#020a02');
+
+    await press(input, 'ArrowUp');
+    expect(input.value).toBe('about');
+
+    await act(async () => root.unmount());
+    window.localStorage.removeItem(createTerminalStorageKey(storageKey, 'history'));
+    window.localStorage.removeItem(createTerminalStorageKey(storageKey, 'theme'));
+  });
+
+  it('does not read persisted storage while server rendering', () => {
+    const storageKey = 'teemo-react-server';
+    window.localStorage.setItem(
+      createTerminalStorageKey(storageKey, 'theme'),
+      JSON.stringify('matrix'),
+    );
+
+    const markup = renderToString(
+      <PretendTerminal
+        theme="dracula"
+        storage={{ enabled: true, key: storageKey, persistTheme: true }}
+      />,
+    );
+
+    expect(markup).toContain('--pt-theme-background:#282a36');
+    expect(markup).not.toContain('--pt-theme-background:#020a02');
+    window.localStorage.removeItem(createTerminalStorageKey(storageKey, 'theme'));
   });
 
   it('submits, browses history, completes, and clears through familiar keyboard controls', async () => {

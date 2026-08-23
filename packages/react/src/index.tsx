@@ -1,4 +1,5 @@
 import {
+  createBrowserStorageAdapter,
   createTerminalEngine,
   type TerminalConfig,
   type TerminalEngine,
@@ -30,28 +31,38 @@ export function PretendTerminal({
     initialConfigRef.current = config;
   }
   const initialConfig = initialConfigRef.current;
-  const engineRef = useRef<TerminalEngine | null>(null);
-  if (!engineRef.current) {
-    engineRef.current = createTerminalEngine(initialConfig);
-  }
-  const engine = engineRef.current;
+  const [engine, setEngine] = useState<TerminalEngine>(() => createTerminalEngine(initialConfig));
   const state = useTerminalState(engine);
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
-  const destroyTokenRef = useRef<object | null>(null);
+  const destroyTokenRef = useRef<{
+    readonly engine: TerminalEngine;
+    readonly token: object;
+  } | null>(null);
+  const hasHydratedStorageRef = useRef(false);
 
   useEffect(() => {
     const token = {};
-    destroyTokenRef.current = token;
+    destroyTokenRef.current = { engine, token };
 
     return () => {
       void Promise.resolve().then(() => {
-        if (destroyTokenRef.current === token) {
+        const current = destroyTokenRef.current;
+        if (current?.engine !== engine || current.token === token) {
           engine.destroy();
         }
       });
     };
   }, [engine]);
+
+  useEffect(() => {
+    if (hasHydratedStorageRef.current || initialConfig.storage?.enabled !== true) {
+      return;
+    }
+
+    hasHydratedStorageRef.current = true;
+    setEngine(createTerminalEngine(initialConfig, { storage: createBrowserStorageAdapter() }));
+  }, [initialConfig]);
 
   useEffect(() => {
     const output = outputRef.current;

@@ -33,6 +33,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 6. Resize the browser below roughly 576px. Confirm the prompt/input layout remains readable and usable.
 7. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
 8. Use keyboard-only navigation: Tab to reach the input, type a command, then use Tab completion and Enter. Confirm the input caret clearly shows where typing will occur.
+9. Enter `about`, refresh the page, then press Up. Confirm the command history restores.
 
 ## Pass criteria
 
