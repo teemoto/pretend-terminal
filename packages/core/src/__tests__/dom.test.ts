@@ -84,6 +84,35 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('replaces pending async work with a safe error when a handler rejects', async () => {
+    let rejectStatus: ((reason?: unknown) => void) | undefined;
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'status',
+          handler: () =>
+            new Promise<never>((_resolve, reject) => {
+              rejectStatus = reject;
+            }),
+        },
+      ],
+    });
+
+    const running = terminal.run('status');
+    expect(mount.querySelector('[data-pt-pending]')?.textContent).toBe('Running…');
+
+    rejectStatus?.(new Error('secret implementation detail'));
+    await expect(running).resolves.toMatchObject({ status: 'executed' });
+
+    expect(mount.querySelector('[data-pt-pending]')?.textContent).toBe('');
+    expect(mount.textContent).toContain('Command failed. Please try again.');
+    expect(mount.textContent).not.toContain('secret implementation detail');
+
+    terminal.destroy();
+  });
+
   it('removes only its own root and rejects use after destroy', () => {
     const mount = document.createElement('div');
     const sibling = document.createElement('p');

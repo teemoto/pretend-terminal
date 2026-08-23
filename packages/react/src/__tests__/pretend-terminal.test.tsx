@@ -161,6 +161,47 @@ describe('PretendTerminal', () => {
 
     await act(async () => root.unmount());
   });
+
+  it('replaces rejected async work with a safe error', async () => {
+    let rejectStatus: ((reason?: unknown) => void) | undefined;
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[
+            {
+              name: 'status',
+              handler: () =>
+                new Promise<never>((_resolve, reject) => {
+                  rejectStatus = reject;
+                }),
+            },
+          ]}
+        />,
+      );
+    });
+
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(input, 'status');
+    await press(input, 'Enter');
+    expect(container.querySelector('[data-pt-pending]')?.textContent).toBe('Running…');
+
+    await act(async () => {
+      rejectStatus?.(new Error('secret implementation detail'));
+      await Promise.resolve();
+    });
+    expect(container.querySelector('[data-pt-pending]')).toBeNull();
+    expect(container.textContent).toContain('Command failed. Please try again.');
+    expect(container.textContent).not.toContain('secret implementation detail');
+
+    await act(async () => root.unmount());
+  });
 });
 
 async function type(input: HTMLInputElement, value: string): Promise<void> {
