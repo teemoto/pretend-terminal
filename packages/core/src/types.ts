@@ -23,7 +23,14 @@ export interface TableOutput {
   readonly rows: readonly (readonly string[])[];
 }
 
-/** Output rendered as a labelled link. */
+/**
+ * Output rendered as a labelled link.
+ *
+ * Relative URLs and `http:`, `https:`, `mailto:`, and `tel:` URLs render as
+ * links. Other protocols render as non-interactive label text. Links open in
+ * the current tab unless `openInNewTab` is enabled; new-tab links receive
+ * `rel="noopener noreferrer"`.
+ */
 export interface LinkOutput {
   readonly type: 'link';
   readonly label: string;

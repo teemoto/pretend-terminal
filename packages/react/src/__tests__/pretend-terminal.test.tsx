@@ -82,6 +82,52 @@ describe('PretendTerminal', () => {
     await act(async () => root.unmount());
   });
 
+  it('renders safe links as anchors and leaves unsafe URLs non-interactive', async () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[
+            {
+              name: 'links',
+              response: [
+                {
+                  type: 'link',
+                  label: 'Teemo profile',
+                  href: 'https://example.com/teemo',
+                  openInNewTab: true,
+                },
+                { type: 'link', label: 'Teemo home', href: '/teemo' },
+                { type: 'link', label: 'Unsafe profile', href: 'javascript:alert(1)' },
+              ],
+            },
+          ]}
+        />,
+      );
+    });
+
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(input, 'links');
+    await press(input, 'Enter');
+
+    const links = container.querySelectorAll('a');
+    expect(links).toHaveLength(2);
+    expect(links[0]?.getAttribute('target')).toBe('_blank');
+    expect(links[0]?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(links[1]?.getAttribute('target')).toBeNull();
+    expect(links[1]?.getAttribute('rel')).toBeNull();
+    expect(container.querySelector('a[href^="javascript:"]')).toBeNull();
+    expect(container.textContent).toContain('Unsafe profile');
+
+    await act(async () => root.unmount());
+  });
+
   it('hydrates opt-in history and theme persistence only after client mount', async () => {
     const storageKey = 'teemo-react-hydration';
     window.localStorage.setItem(

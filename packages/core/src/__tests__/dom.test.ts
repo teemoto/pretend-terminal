@@ -61,7 +61,7 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
-  it('renders links and tables with safe browser semantics', async () => {
+  it('renders allowed links with safe browser semantics and leaves unsafe URLs non-interactive', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, {
       includeBuiltIns: false,
@@ -75,6 +75,8 @@ describe('createTerminal', () => {
               href: 'https://example.com/teemo',
               openInNewTab: true,
             },
+            { type: 'link', label: 'Teemo home', href: '/teemo' },
+            { type: 'link', label: 'Unsafe profile', href: 'javascript:alert(1)' },
             { type: 'table', headers: ['Role'], rows: [['Scout']] },
             { type: 'ascii', value: '(^.^)' },
           ],
@@ -84,7 +86,14 @@ describe('createTerminal', () => {
 
     await terminal.run('profile');
 
-    expect(mount.querySelector('a')?.getAttribute('rel')).toBe('noopener noreferrer');
+    const links = mount.querySelectorAll('a');
+    expect(links).toHaveLength(2);
+    expect(links[0]?.getAttribute('target')).toBe('_blank');
+    expect(links[0]?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(links[1]?.getAttribute('target')).toBeNull();
+    expect(links[1]?.getAttribute('rel')).toBeNull();
+    expect(mount.querySelector('a[href^="javascript:"]')).toBeNull();
+    expect(mount.textContent).toContain('Unsafe profile');
     expect(mount.querySelector('th')?.textContent).toBe('Role');
     expect(mount.querySelector('pre')?.textContent).toBe('(^.^)');
 

@@ -129,10 +129,12 @@ v1 supports structured output only:
 | `lines`                               | Multiple lines of text.                   |
 | `success`, `error`, `muted`, `accent` | Semantically styled text.                 |
 | `table`                               | Small label/value or tabular data.        |
-| `link`                                | A labelled link with a URL.               |
+| `link`                                | A labelled, safe browser link.            |
 | `ascii`                               | Preformatted ASCII art or code-like text. |
 
 Implementations must safely render strings as text. Raw HTML and Markdown are not accepted as v1 output types.
+
+Links accept relative URLs plus `http:`, `https:`, `mailto:`, and `tel:` URLs. Unsupported protocols, including `javascript:` and `data:`, render their label as non-interactive text. A link opens in the current tab by default. Setting `openInNewTab: true` adds `target="_blank"` and `rel="noopener noreferrer"`.
 
 ### 8.6 Theme and styling
 

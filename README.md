@@ -161,6 +161,8 @@ Public tokens are semantic, so overrides remain stable across theme palettes:
 
 Pretend Terminal is a UI component, not a command runner. It does not access a machine’s shell, filesystem, environment variables, or network unless an application author deliberately writes a command handler that does so. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
 
+Link output accepts relative URLs and `http:`, `https:`, `mailto:`, and `tel:` URLs. Unsafe protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds the usual `noopener noreferrer` protection.
+
 ## Project roadmap
 
 The immediate goal is a polished, documented v1. Advanced possibilities—such as richer content, localization helpers, plug-ins, and deeper terminal emulation—are tracked separately in the [future phases](docs/PRD.md#future-phases-not-v1).

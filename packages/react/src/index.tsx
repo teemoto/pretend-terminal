@@ -1,6 +1,7 @@
 import {
   createBrowserStorageAdapter,
   createTerminalEngine,
+  isSafeLinkHref,
   type TerminalConfig,
   type TerminalEngine,
   type TerminalEngineState,
@@ -236,6 +237,9 @@ function OutputBlock({ output }: { readonly output: TerminalOutputBlock }): Reac
         </table>
       );
     case 'link':
+      if (!isSafeLinkHref(output.href)) {
+        return <span className="pt-output pt-output-link">{output.label}</span>;
+      }
       return (
         <a
           className="pt-output pt-output-link"

@@ -26,6 +26,8 @@ export {
 
 export { createTerminalEngine, TerminalEngineError } from './engine.js';
 
+export { isSafeLinkHref } from './links.js';
+
 export { createTerminal, TerminalMountError } from './dom.js';
 
 export type { MountedTerminal, TerminalDomConfig } from './dom.js';

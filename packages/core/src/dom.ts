@@ -1,4 +1,5 @@
 import { createTerminalEngine, type TerminalEngine, type TerminalRunResult } from './engine.js';
+import { isSafeLinkHref } from './links.js';
 import { createBrowserStorageAdapter } from './storage.js';
 import type { TerminalConfig } from './types.js';
 import type { TerminalThemeInput } from './themes.js';
@@ -259,6 +260,12 @@ function renderTranscriptEntry(
       return table;
     }
     case 'link': {
+      if (!isSafeLinkHref(output.href)) {
+        const text = document.createElement('span');
+        text.className = 'pt-output pt-output-link';
+        text.textContent = output.label;
+        return text;
+      }
       const link = document.createElement('a');
       link.className = 'pt-output pt-output-link';
       link.href = output.href;
