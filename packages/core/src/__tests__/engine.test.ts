@@ -107,6 +107,28 @@ describe('createTerminalEngine', () => {
     });
   });
 
+  it('does not emit an in-flight result after the engine is destroyed', async () => {
+    let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'status',
+          handler: () =>
+            new Promise((resolve) => {
+              resolveStatus = resolve;
+            }),
+        },
+      ],
+    });
+
+    const running = engine.run('status');
+    engine.destroy();
+    resolveStatus?.({ type: 'success', value: 'Ready.' });
+
+    await expect(running).resolves.toMatchObject({ status: 'executed' });
+  });
+
   it('records output returned by a synchronous dynamic handler', async () => {
     const engine = createTerminalEngine({
       includeBuiltIns: false,

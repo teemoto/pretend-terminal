@@ -302,8 +302,15 @@ export function createTerminalEngine(
         normalizedInput,
         commandName: command.normalizedName,
       };
-      appendOutput(await command.command.handler(context));
+      const output = await command.command.handler(context);
+      if (destroyed) {
+        return { status: 'executed', command };
+      }
+      appendOutput(output);
     } catch {
+      if (destroyed) {
+        return { status: 'executed', command };
+      }
       appendOutput({
         type: 'error',
         value: 'Command failed. Please try again.',
@@ -312,6 +319,9 @@ export function createTerminalEngine(
       isExecuting = false;
     }
 
+    if (destroyed) {
+      return { status: 'executed', command };
+    }
     emit();
     return { status: 'executed', command };
   }

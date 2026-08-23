@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
-import { act } from 'react';
+import { act, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { PretendTerminal } from '../index.js';
 
@@ -199,6 +199,67 @@ describe('PretendTerminal', () => {
     expect(container.querySelector('[data-pt-pending]')).toBeNull();
     expect(container.textContent).toContain('Command failed. Please try again.');
     expect(container.textContent).not.toContain('secret implementation detail');
+
+    await act(async () => root.unmount());
+  });
+
+  it('continues to run exactly once under React Strict Mode and cleans up after unmount', async () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <StrictMode>
+          <PretendTerminal
+            includeBuiltIns={false}
+            commands={[{ name: 'about', response: { type: 'text', value: 'Captain Teemo.' } }]}
+          />
+        </StrictMode>,
+      );
+    });
+
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(input, 'about');
+    await press(input, 'Enter');
+    expect(container.textContent?.match(/Captain Teemo\./g)).toHaveLength(1);
+
+    await act(async () => root.unmount());
+  });
+
+  it('invokes command callbacks once with the submitted input', async () => {
+    const onCommand = vi.fn();
+    const onUnknownCommand = vi.fn();
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[{ name: 'about', response: { type: 'text', value: 'Captain Teemo.' } }]}
+          onCommand={onCommand}
+          onUnknownCommand={onUnknownCommand}
+        />,
+      );
+    });
+
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(input, 'about');
+    await press(input, 'Enter');
+    await type(input, 'dance');
+    await press(input, 'Enter');
+
+    expect(onCommand).toHaveBeenCalledTimes(2);
+    expect(onCommand).toHaveBeenNthCalledWith(1, 'about');
+    expect(onCommand).toHaveBeenNthCalledWith(2, 'dance');
+    expect(onUnknownCommand).toHaveBeenCalledTimes(1);
+    expect(onUnknownCommand).toHaveBeenCalledWith('dance');
 
     await act(async () => root.unmount());
   });

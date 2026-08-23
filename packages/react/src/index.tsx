@@ -38,8 +38,20 @@ export function PretendTerminal({
   const state = useTerminalState(engine);
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+  const destroyTokenRef = useRef<object | null>(null);
 
-  useEffect(() => () => engine.destroy(), [engine]);
+  useEffect(() => {
+    const token = {};
+    destroyTokenRef.current = token;
+
+    return () => {
+      void Promise.resolve().then(() => {
+        if (destroyTokenRef.current === token) {
+          engine.destroy();
+        }
+      });
+    };
+  }, [engine]);
 
   useEffect(() => {
     const output = outputRef.current;
