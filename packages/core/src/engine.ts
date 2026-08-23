@@ -5,6 +5,7 @@ import {
   type RegisteredBuiltInCommand,
   type RegisteredCommand,
 } from './registry.js';
+import { createCommandFailureOutput } from './output.js';
 import { createTerminalStorageKey, type TerminalStorageAdapter } from './storage.js';
 import { resolveTheme, type ResolvedTerminalTheme, type TerminalThemeInput } from './themes.js';
 import type {
@@ -311,10 +312,7 @@ export function createTerminalEngine(
       if (destroyed) {
         return { status: 'executed', command };
       }
-      appendOutput({
-        type: 'error',
-        value: 'Command failed. Please try again.',
-      });
+      appendOutput(createCommandFailureOutput());
     } finally {
       isExecuting = false;
     }

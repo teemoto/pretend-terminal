@@ -75,7 +75,7 @@ Both packages use TypeScript, publish ESM builds, and expose their relevant type
 - Keep the most recent output visible by auto-scrolling after output is added.
 - Display a clear unknown-command response with guidance to use `help`.
 - Support synchronous and asynchronous command results.
-- Show a non-breaking error response if a command handler fails.
+- Show `Command failed. Please try again.` as a non-breaking error response if a command handler throws or rejects; do not expose the thrown error to visitors.
 
 ### 8.2 Input and keyboard behavior
 
