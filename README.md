@@ -183,6 +183,8 @@ Public tokens are semantic, so overrides remain stable across theme palettes:
 | `--pt-accent`, `--pt-success`, `--pt-error`                                             | Interactive, positive, and error states.     |
 | `--pt-font-family`, `--pt-font-size`, `--pt-line-height`, `--pt-radius`, `--pt-spacing` | Typography and layout scale.                 |
 
+The bundled themes meet the documented text and focus contrast thresholds; see the [theme contrast audit](docs/THEME_CONTRAST.md). Custom token overrides remain the consumer’s responsibility to review.
+
 ## Security model
 
 Pretend Terminal is a UI component, not a command runner. It does not access a machine’s shell, filesystem, environment variables, or network unless an application author deliberately writes a command handler that does so. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
