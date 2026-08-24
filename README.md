@@ -91,6 +91,22 @@ export function Terminal() {
 
 `PretendTerminal` accepts the same configuration fields as the core API, plus `className`, `style`, and `ariaLabel`. In v1, treat command/theme/persistence configuration as initialization-time props; use the imperative APIs in a custom integration when those need to change at runtime.
 
+### Vanilla imperative API
+
+`createTerminal` returns an instance for application-triggered interactions:
+
+```ts
+const terminal = createTerminal(document.querySelector('#terminal'), config);
+
+await terminal.run('about');
+terminal.setTheme('amber');
+terminal.focus();
+terminal.clear();
+terminal.destroy();
+```
+
+The lower-level `createTerminalEngine` export is DOM-independent. It exposes state subscription, input, history, completion, theme, execution, clear, and destroy controls; focus belongs to a renderer with a real input.
+
 ## Configuration
 
 The primary API is a configuration object. Static configurations can live in a JSON file; dynamic commands use JavaScript or TypeScript.

@@ -206,8 +206,11 @@ The final names may change during implementation, but behavior must remain align
 1. Build a DOM-independent core engine with state transitions for input, history, execution, completion, themes, and persistence adapters.
 2. Build a vanilla renderer that mounts the core engine into an element and returns an imperative instance (`run`, `clear`, `focus`, `setTheme`, `destroy`).
 3. Build a React adapter that uses the core engine and exposes a `PretendTerminal` component plus a lower-level hook for custom rendering.
+4. Render structured output with first-party renderer functions; React-specific custom children are not a v1 requirement.
 
-For v1, `PretendTerminal` treats terminal configuration as initialization-time input. Presentation props such as `className`, `style`, and `ariaLabel` may update normally; changing commands, theme configuration, or persistence settings requires mounting a new terminal instance. 4. Render structured output with first-party renderer functions; React-specific custom children are not a v1 requirement.
+For v1, `PretendTerminal` treats terminal configuration as initialization-time input. Presentation props such as `className`, `style`, and `ariaLabel` may update normally; changing commands, theme configuration, or persistence settings requires mounting a new terminal instance.
+
+The headless engine exposes `getState`, `subscribe`, `setInput`, history navigation, completion, `setTheme`, `run`, `clear`, and `destroy`. It has no `focus` method because it is browser-independent; the mounted vanilla terminal adds `focus()` for its real input element.
 
 ## 10. Quality requirements
 

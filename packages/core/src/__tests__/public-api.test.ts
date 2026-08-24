@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import type {
   Command,
   CommandHandlerContext,
+  MountedTerminal,
   TerminalConfig,
+  TerminalEngine,
   TerminalOutputBlock,
 } from '../index.js';
 
@@ -83,5 +85,30 @@ describe('the public core type contract', () => {
     } satisfies TerminalConfig;
 
     expect(config.storage.key).toBe('teemo-terminal');
+  });
+
+  it('exposes the headless and mounted imperative control surfaces', () => {
+    type HeadlessControls = Pick<
+      TerminalEngine,
+      | 'getState'
+      | 'subscribe'
+      | 'setInput'
+      | 'navigateHistory'
+      | 'complete'
+      | 'setTheme'
+      | 'run'
+      | 'clear'
+      | 'destroy'
+    >;
+    type MountedControls = Pick<
+      MountedTerminal,
+      'run' | 'clear' | 'focus' | 'setTheme' | 'destroy'
+    >;
+
+    const headlessControls = {} as HeadlessControls;
+    const mountedControls = {} as MountedControls;
+
+    expect(headlessControls).toBeDefined();
+    expect(mountedControls).toBeDefined();
   });
 });

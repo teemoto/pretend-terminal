@@ -80,15 +80,25 @@ export type TerminalStateListener = (state: TerminalEngineState) => void;
 
 /** Headless terminal behavior shared by future DOM and React renderers. */
 export interface TerminalEngine {
+  /** Active normalized command registry, shared by execution and completion. */
   readonly registry: CommandRegistry;
+  /** Returns the current immutable renderer state snapshot. */
   getState(): TerminalEngineState;
+  /** Subscribes to state updates and returns an unsubscribe function. */
   subscribe(listener: TerminalStateListener): () => void;
+  /** Replaces the draft command text. */
   setInput(input: string): void;
+  /** Moves through retained command history. */
   navigateHistory(direction: TerminalHistoryDirection): string;
+  /** Completes the current input or returns matching command suggestions. */
   complete(): TerminalCompletionResult;
+  /** Changes the active theme without clearing terminal state. */
   setTheme(theme: TerminalThemeInput): void;
+  /** Submits an input line for command execution. */
   run(input: string): Promise<TerminalRunResult>;
+  /** Clears visible transcript entries without deleting history. */
   clear(): void;
+  /** Releases subscriptions and prevents further interaction. */
   destroy(): void;
 }
 
