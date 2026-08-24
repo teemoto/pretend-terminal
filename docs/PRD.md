@@ -89,6 +89,8 @@ Command history retains submitted commands in chronological order, including dup
 
 Tab completion matches active command names and aliases by a case-insensitive, trimmed prefix. One match replaces input with the command’s canonical name; multiple matches leave input unchanged and expose active commands in registry order; zero matches leave input unchanged. v1 does not apply common-prefix completion.
 
+The clear shortcut accepts Ctrl+L on Windows and Linux plus Cmd+L on macOS. Other command controls use standard text-input keys without platform-specific remapping.
+
 The default unknown-command response is `Command not found: {command}. Type help for available commands.` Consumers may override it with the JSON-compatible `messages.unknownCommand` string; every `{command}` placeholder is replaced with the submitted command. The `messages` object is intentionally extensible for future localization-ready strings.
 
 ### 8.3 Commands and configuration
@@ -299,4 +301,3 @@ These do not block the v1 scope, but should be decided while scaffolding:
 - The exact monorepo tooling and release/versioning workflow.
 - Whether the vanilla renderer is exported directly from `core` or as a small sibling package.
 - The final names of output-type discriminators and public configuration fields.
-- Whether `Cmd + L` maps to clear in addition to `Ctrl + L` on macOS (recommended).

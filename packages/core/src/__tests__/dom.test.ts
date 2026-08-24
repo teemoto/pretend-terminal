@@ -296,9 +296,29 @@ describe('createTerminal', () => {
     expect(input.value).toBe('about');
     expect(input.hasAttribute('aria-describedby')).toBe(false);
 
+    const controlClear = new KeyboardEvent('keydown', {
+      key: 'l',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(controlClear);
+    expect(controlClear.defaultPrevented).toBe(true);
+    expect(mount.querySelector('[data-pt-output]')?.textContent).toBe('');
+
+    input.value = 'about';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'l', ctrlKey: true, bubbles: true, cancelable: true }),
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
     );
+    const commandClear = new KeyboardEvent('keydown', {
+      key: 'l',
+      metaKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(commandClear);
+    expect(commandClear.defaultPrevented).toBe(true);
     expect(mount.querySelector('[data-pt-output]')?.textContent).toBe('');
 
     terminal.destroy();

@@ -253,7 +253,14 @@ describe('PretendTerminal', () => {
     const unmatchedTab = await press(input, 'Tab');
     expect(unmatchedTab.defaultPrevented).toBe(false);
 
-    await press(input, 'l', { ctrlKey: true });
+    const controlClear = await press(input, 'l', { ctrlKey: true });
+    expect(controlClear.defaultPrevented).toBe(true);
+    expect(container.querySelector('[data-pt-output]')?.textContent).toBe('');
+
+    await type(input, 'about');
+    await press(input, 'Enter');
+    const commandClear = await press(input, 'l', { metaKey: true });
+    expect(commandClear.defaultPrevented).toBe(true);
     expect(container.querySelector('[data-pt-output]')?.textContent).toBe('');
 
     input.blur();
