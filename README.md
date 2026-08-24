@@ -187,7 +187,9 @@ The bundled themes meet the documented text and focus contrast thresholds; see t
 
 ## Security model
 
-Pretend Terminal is a UI component, not a command runner. It does not access a machine’s shell, filesystem, environment variables, or network unless an application author deliberately writes a command handler that does so. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
+Pretend Terminal is a UI component, not a command runner. Its packages do not execute a shell command, read a filesystem or environment variable, or make network requests. The only browser storage access is opt-in history/theme persistence through `localStorage`.
+
+Command handlers are application-owned code. A handler may choose to call an API, but that request belongs to the consuming application—not Pretend Terminal—and should follow the application’s own security and privacy rules. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
 
 Every string in the structured output model—including command echoes, lines, table cells, link labels, and ASCII—renders as text rather than markup in both integrations.
 

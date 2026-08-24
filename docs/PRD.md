@@ -140,6 +140,8 @@ Implementations must safely render strings as text. Raw HTML and Markdown are no
 
 Links accept relative URLs plus `http:`, `https:`, `mailto:`, and `tel:` URLs. Unsupported protocols, including `javascript:` and `data:`, render their label as non-interactive text. A link opens in the current tab by default. Setting `openInNewTab: true` adds `target="_blank"` and `rel="noopener noreferrer"`.
 
+The packages never execute shell commands, inspect host files or environment variables, or make network requests. Application-owned dynamic handlers may make requests under the consuming application’s own security and privacy policies. Opt-in browser persistence is the only library platform storage access.
+
 ### 8.6 Theme and styling
 
 - Include the `default`, `dracula`, `matrix`, `amber`, and `light` theme presets.
