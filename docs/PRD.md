@@ -89,6 +89,8 @@ Command history retains submitted commands in chronological order, including dup
 
 Tab completion matches active command names and aliases by a case-insensitive, trimmed prefix. One match replaces input with the command’s canonical name; multiple matches leave input unchanged and expose active commands in registry order; zero matches leave input unchanged. v1 does not apply common-prefix completion.
 
+The default unknown-command response is `Command not found: {command}. Type help for available commands.` Consumers may override it with the JSON-compatible `messages.unknownCommand` string; every `{command}` placeholder is replaced with the submitted command. The `messages` object is intentionally extensible for future localization-ready strings.
+
 ### 8.3 Commands and configuration
 
 Every command defines exactly one execution form: a static `response` or a JavaScript/TypeScript `handler`. It may also define:
@@ -180,6 +182,9 @@ type TerminalConfig = {
   themes?: Record<string, ThemeTokens>;
   className?: string;
   historyLimit?: number;
+  messages?: {
+    unknownCommand?: string;
+  };
   storage?: {
     enabled: boolean;
     key: string;

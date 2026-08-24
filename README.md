@@ -134,6 +134,16 @@ The primary API is a configuration object. Static configurations can live in a J
 
 The built-in `help` command generates its content from currently enabled commands. Supply your own command named `help` to replace that behavior and fully control its copy.
 
+For an unmatched command, the default response suggests `help`. Change that copy without a handler through the JSON-compatible `messages` configuration; `{command}` is replaced with the submitted input:
+
+```json
+{
+  "messages": {
+    "unknownCommand": "Teemo does not recognize: {command}."
+  }
+}
+```
+
 For application behavior beyond static content, commands may provide a handler:
 
 ```ts

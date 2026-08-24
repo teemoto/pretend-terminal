@@ -71,7 +71,24 @@ describe('createTerminalEngine', () => {
     expect(onUnknownCommand).toHaveBeenCalledWith('missing');
     expect(engine.getState().transcript.at(-1)).toEqual({
       kind: 'output',
-      output: { type: 'error', value: 'Command not found: missing' },
+      output: {
+        type: 'error',
+        value: 'Command not found: missing. Type help for available commands.',
+      },
+    });
+  });
+
+  it('uses a configured JSON-friendly message for unknown commands', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      messages: { unknownCommand: 'Teemo does not recognize: {command}.' },
+    });
+
+    await engine.run('dance');
+
+    expect(engine.getState().transcript.at(-1)).toEqual({
+      kind: 'output',
+      output: { type: 'error', value: 'Teemo does not recognize: dance.' },
     });
   });
 

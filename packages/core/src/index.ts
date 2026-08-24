@@ -8,6 +8,7 @@ export type {
   StyledOutput,
   TableOutput,
   TerminalConfig,
+  TerminalMessages,
   TerminalOutput,
   TerminalOutputBlock,
   TerminalStorageConfig,

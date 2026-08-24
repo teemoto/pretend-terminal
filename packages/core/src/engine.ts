@@ -5,7 +5,7 @@ import {
   type RegisteredBuiltInCommand,
   type RegisteredCommand,
 } from './registry.js';
-import { createCommandFailureOutput } from './output.js';
+import { createCommandFailureOutput, createUnknownCommandOutput } from './output.js';
 import { createTerminalStorageKey, type TerminalStorageAdapter } from './storage.js';
 import { resolveTheme, type ResolvedTerminalTheme, type TerminalThemeInput } from './themes.js';
 import type {
@@ -277,10 +277,7 @@ export function createTerminalEngine(
     config.onCommand?.(submittedInput);
 
     if (!command) {
-      appendOutput({
-        type: 'error',
-        value: `Command not found: ${submittedInput}`,
-      });
+      appendOutput(createUnknownCommandOutput(submittedInput, config.messages?.unknownCommand));
       config.onUnknownCommand?.(submittedInput);
       emit();
       return { status: 'unknown', input: submittedInput };

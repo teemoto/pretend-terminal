@@ -97,6 +97,15 @@ export interface EnabledTerminalStorageConfig {
 /** Opt-in configuration for browser history and theme persistence. */
 export type TerminalStorageConfig = DisabledTerminalStorageConfig | EnabledTerminalStorageConfig;
 
+/** Visitor-facing strings that can be changed without writing a command handler. */
+export interface TerminalMessages {
+  /**
+   * Response shown for an unmatched non-empty command. `{command}` is replaced
+   * with the submitted command. Defaults to a message that suggests `help`.
+   */
+  readonly unknownCommand?: string;
+}
+
 /** Context supplied to a dynamic command handler. */
 export interface CommandHandlerContext {
   /** The exact non-empty input submitted by the visitor. */
@@ -147,6 +156,8 @@ export interface TerminalConfig {
   /** Maximum session-history entries to retain. Defaults to 100; zero disables retention. */
   readonly historyLimit?: number;
   readonly storage?: TerminalStorageConfig;
+  /** Optional visitor-facing message overrides. */
+  readonly messages?: TerminalMessages;
   /** Invoked after non-empty input is recorded, before the command resolves. */
   readonly onCommand?: (command: string) => void;
   /** Invoked only when non-empty input does not match an active command. */
