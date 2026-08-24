@@ -167,6 +167,7 @@ Persistence is opt-in and browser-only.
 - Use a real `<input>` for command entry.
 - Expose the terminal as a labelled `region`, its transcript as a labelled `log`, and the real input as `Terminal command`.
 - Announce new transcript additions politely. Do not re-announce unchanged transcript history when later commands add output.
+- Place each submitted command echo and safe error response in that output log so screen-reader users receive the same interaction record as sighted users.
 - Preserve standard input editing and focus behavior.
 - Make all documented keyboard controls usable without a mouse.
 - Respect `prefers-reduced-motion` if animated scrolling, cursors, or transitions are introduced.

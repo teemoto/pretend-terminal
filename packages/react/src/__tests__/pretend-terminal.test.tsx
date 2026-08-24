@@ -392,6 +392,12 @@ describe('PretendTerminal', () => {
     expect(onCommand).toHaveBeenNthCalledWith(2, 'dance');
     expect(onUnknownCommand).toHaveBeenCalledTimes(1);
     expect(onUnknownCommand).toHaveBeenCalledWith('dance');
+    expect(container.querySelector('[data-pt-output]')?.textContent).toContain(
+      'visitor@pretend-terminal:~ $ dance',
+    );
+    expect(container.querySelector('[data-pt-output]')?.textContent).toContain(
+      'Command not found: dance. Type help for available commands.',
+    );
 
     await act(async () => root.unmount());
   });

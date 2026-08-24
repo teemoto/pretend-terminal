@@ -54,6 +54,24 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('places command echoes and safe errors in the accessible output log', async () => {
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      prompt: 'teemo@portfolio:~ $',
+    });
+
+    await terminal.run('dance');
+
+    const output = mount.querySelector('[data-pt-output]');
+    expect(output?.textContent).toContain('teemo@portfolio:~ $ dance');
+    expect(output?.textContent).toContain(
+      'Command not found: dance. Type help for available commands.',
+    );
+
+    terminal.destroy();
+  });
+
   it('uses the terminal as the scrolling container when a fixed height is configured', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, { height: '28rem' });
