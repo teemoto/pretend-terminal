@@ -25,7 +25,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 12. Paste a deliberately long unknown command. Confirm its echoed command wraps cleanly without horizontal page overflow.
 13. Resize the browser below roughly 576px. Confirm the long prompt, input, table, link, and ASCII output remain readable and usable.
 14. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
-15. Refresh the page and confirm the last chosen named theme and command history restore.
+15. Click a theme button after running commands. Confirm the terminal theme changes without clearing the transcript, then refresh the page and confirm the last chosen named theme and command history restore.
 
 ## React example
 

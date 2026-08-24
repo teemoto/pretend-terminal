@@ -44,6 +44,28 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('switches the mounted theme without replacing the terminal or clearing its transcript', async () => {
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+    });
+    const root = mount.querySelector<HTMLElement>('[data-pt-root]');
+    if (!root) {
+      throw new Error('Expected a terminal root.');
+    }
+
+    await terminal.run('about');
+    terminal.setTheme('matrix');
+
+    expect(mount.querySelector('[data-pt-root]')).toBe(root);
+    expect(mount.querySelectorAll('[data-pt-root]')).toHaveLength(1);
+    expect(root.style.getPropertyValue('--pt-theme-background')).toBe('#020a02');
+    expect(mount.textContent).toContain('Captain Teemo on duty.');
+
+    terminal.destroy();
+  });
+
   it('renders configured text as text rather than HTML', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, {
