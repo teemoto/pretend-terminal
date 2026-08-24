@@ -4,11 +4,47 @@ import {
   createMemoryStorageAdapter,
   createTerminalEngine,
   createTerminalStorageKey,
+  CommandRegistryError,
   TerminalEngineError,
   type TerminalOutputBlock,
 } from '../index.js';
 
 describe('createTerminalEngine', () => {
+  it('starts with useful defaults from an empty configuration', async () => {
+    const engine = createTerminalEngine();
+
+    expect(engine.getState()).toMatchObject({
+      input: '',
+      completionSuggestions: [],
+      history: [],
+      transcript: [],
+      theme: { name: 'default' },
+    });
+
+    await expect(engine.run('help')).resolves.toMatchObject({ status: 'executed' });
+    expect(engine.getState().transcript.at(-1)).toEqual({
+      kind: 'output',
+      output: {
+        type: 'table',
+        headers: ['Command', 'Description'],
+        rows: [
+          ['help', 'List available commands.'],
+          ['clear', 'Clear visible terminal output.'],
+          ['history', 'Show command history.'],
+        ],
+      },
+    });
+  });
+
+  it('reports an actionable error for an invalid command configuration', () => {
+    expect(() =>
+      createTerminalEngine({
+        includeBuiltIns: false,
+        commands: [{ name: '   ', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+      }),
+    ).toThrow(new CommandRegistryError('Command name must not be empty.'));
+  });
+
   it('executes static commands and records an echo plus structured output', async () => {
     const onCommand = vi.fn();
     const engine = createTerminalEngine({
