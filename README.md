@@ -111,6 +111,8 @@ The lower-level `createTerminalEngine` export is DOM-independent. It exposes sta
 
 The primary API is a configuration object. Static configurations can live in a JSON file; dynamic commands use JavaScript or TypeScript.
 
+The [vanilla example configuration](examples/vanilla/src/terminal.config.json) is imported directly by Vite. Its static commands live in JSON, while the entry module adds the one async handler and callbacks that JSON cannot express.
+
 ```json
 {
   "prompt": "teemo@portfolio:~ $",

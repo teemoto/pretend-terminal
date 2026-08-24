@@ -12,7 +12,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 ## Vanilla example
 
 1. Confirm the terminal has an Amber appearance, a long Teemo prompt, no input outline after clicking it, and a fixed height.
-2. Enter `help`. Confirm built-in and configured commands are listed.
+2. Open `examples/vanilla/src/terminal.config.json` and confirm its static commands match the JSON-configured commands shown by `help`; the separately added `status` command is the JavaScript async example. Then enter `help`. Confirm built-in and configured commands are listed.
 3. Enter `about`, `projects`, `contact`, and `map`. Confirm lines, table, link, and ASCII output each render clearly.
 4. Enter `status`. Confirm `Running…` appears briefly, then a green success message replaces it.
 5. Enter an unconfigured command such as `dance`. Confirm the unknown-command message and the page event log both update.
