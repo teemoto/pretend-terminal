@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { createTerminal, TerminalMountError } from '../index.js';
+import { createTerminal, createTerminalStorageKey, TerminalMountError } from '../index.js';
 
 describe('createTerminal', () => {
   it('mounts a labelled terminal and renders command output through its imperative API', async () => {
@@ -225,5 +225,45 @@ describe('createTerminal', () => {
     expect(tab.defaultPrevented).toBe(false);
 
     terminal.destroy();
+  });
+
+  it('keeps concurrent terminals and their persisted histories independent', async () => {
+    const teemoStorageKey = 'teemo-dom-instance';
+    const scoutStorageKey = 'scout-dom-instance';
+    const teemoHistoryKey = createTerminalStorageKey(teemoStorageKey, 'history');
+    const scoutHistoryKey = createTerminalStorageKey(scoutStorageKey, 'history');
+    window.localStorage.removeItem(teemoHistoryKey);
+    window.localStorage.removeItem(scoutHistoryKey);
+
+    const teemoMount = document.createElement('div');
+    const scoutMount = document.createElement('div');
+    document.body.append(teemoMount, scoutMount);
+    const teemoTerminal = createTerminal(teemoMount, {
+      includeBuiltIns: false,
+      storage: { enabled: true, key: teemoStorageKey, persistHistory: true },
+      commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+    });
+    const scoutTerminal = createTerminal(scoutMount, {
+      includeBuiltIns: false,
+      storage: { enabled: true, key: scoutStorageKey, persistHistory: true },
+      commands: [{ name: 'status', response: { type: 'text', value: 'Scout status: ready.' } }],
+    });
+
+    await teemoTerminal.run('about');
+    await scoutTerminal.run('status');
+
+    expect(teemoMount.textContent).toContain('Captain Teemo on duty.');
+    expect(teemoMount.textContent).not.toContain('Scout status: ready.');
+    expect(scoutMount.textContent).toContain('Scout status: ready.');
+    expect(scoutMount.textContent).not.toContain('Captain Teemo on duty.');
+    expect(window.localStorage.getItem(teemoHistoryKey)).toBe(JSON.stringify(['about']));
+    expect(window.localStorage.getItem(scoutHistoryKey)).toBe(JSON.stringify(['status']));
+
+    teemoTerminal.destroy();
+    scoutTerminal.destroy();
+    teemoMount.remove();
+    scoutMount.remove();
+    window.localStorage.removeItem(teemoHistoryKey);
+    window.localStorage.removeItem(scoutHistoryKey);
   });
 });
