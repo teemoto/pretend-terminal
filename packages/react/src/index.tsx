@@ -8,7 +8,7 @@ import {
   type TerminalOutputBlock,
   type TerminalTranscriptEntry,
 } from '@pretend-terminal/core';
-import { type CSSProperties, type ReactElement, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type ReactElement, useEffect, useId, useRef, useState } from 'react';
 
 /** Props for the React Pretend Terminal component. */
 export interface PretendTerminalProps extends TerminalConfig {
@@ -37,6 +37,7 @@ export function PretendTerminal({
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLElement>(null);
+  const suggestionsId = useId();
   const destroyTokenRef = useRef<{
     readonly engine: TerminalEngine;
     readonly token: object;
@@ -125,7 +126,13 @@ export function PretendTerminal({
         ))}
       </div>
       {state.completionSuggestions.length > 0 ? (
-        <div className="pt-completion-suggestions" data-pt-suggestions="" aria-live="polite">
+        <div
+          id={suggestionsId}
+          className="pt-completion-suggestions"
+          data-pt-suggestions=""
+          role="status"
+          aria-live="polite"
+        >
           {state.completionSuggestions.map((suggestion) => suggestion.name).join('  ')}
         </div>
       ) : null}
@@ -146,6 +153,7 @@ export function PretendTerminal({
           autoCapitalize="off"
           spellCheck={false}
           aria-label="Terminal command"
+          aria-describedby={state.completionSuggestions.length > 0 ? suggestionsId : undefined}
           onChange={(event) => engine.setInput(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {

@@ -4,6 +4,8 @@ import { createBrowserStorageAdapter } from './storage.js';
 import type { TerminalConfig } from './types.js';
 import type { TerminalThemeInput } from './themes.js';
 
+let terminalInstanceCount = 0;
+
 /** Vanilla-JS configuration for an accessible mounted terminal. */
 export interface TerminalDomConfig extends TerminalConfig {
   /** Accessible name for the terminal region. */
@@ -31,6 +33,7 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   }
 
   const document = element.ownerDocument;
+  const suggestionsId = `pt-suggestions-${(terminalInstanceCount += 1)}`;
   const root = document.createElement('section');
   root.className = ['pt-terminal', config.className].filter(Boolean).join(' ');
   root.dataset.ptRoot = '';
@@ -52,6 +55,8 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   const suggestions = document.createElement('div');
   suggestions.className = 'pt-completion-suggestions';
   suggestions.dataset.ptSuggestions = '';
+  suggestions.id = suggestionsId;
+  suggestions.setAttribute('role', 'status');
   suggestions.setAttribute('aria-live', 'polite');
 
   const pending = document.createElement('div');
@@ -103,6 +108,11 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
     suggestions.textContent = state.completionSuggestions
       .map((suggestion) => suggestion.name)
       .join('  ');
+    if (state.completionSuggestions.length > 0) {
+      input.setAttribute('aria-describedby', suggestionsId);
+    } else {
+      input.removeAttribute('aria-describedby');
+    }
     pending.textContent = state.isExecuting ? 'Running…' : '';
     root.toggleAttribute('data-pt-executing', state.isExecuting);
 

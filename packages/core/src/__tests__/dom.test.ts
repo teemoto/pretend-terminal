@@ -282,7 +282,11 @@ describe('createTerminal', () => {
     });
     input.dispatchEvent(ambiguousTab);
     expect(ambiguousTab.defaultPrevented).toBe(true);
-    expect(mount.querySelector('[data-pt-suggestions]')?.textContent).toBe('about  archive');
+    const suggestions = mount.querySelector<HTMLElement>('[data-pt-suggestions]');
+    expect(suggestions?.textContent).toBe('about  archive');
+    expect(suggestions?.getAttribute('role')).toBe('status');
+    expect(suggestions?.getAttribute('aria-live')).toBe('polite');
+    expect(input.getAttribute('aria-describedby')).toBe(suggestions?.id);
 
     input.value = 'wh';
     input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -290,6 +294,7 @@ describe('createTerminal', () => {
       new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
     );
     expect(input.value).toBe('about');
+    expect(input.hasAttribute('aria-describedby')).toBe(false);
 
     input.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'l', ctrlKey: true, bubbles: true, cancelable: true }),

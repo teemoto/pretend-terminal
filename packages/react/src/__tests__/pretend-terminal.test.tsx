@@ -238,11 +238,16 @@ describe('PretendTerminal', () => {
     await type(input, 'a');
     const ambiguousTab = await press(input, 'Tab');
     expect(ambiguousTab.defaultPrevented).toBe(true);
-    expect(container.querySelector('[data-pt-suggestions]')?.textContent).toBe('about  archive');
+    const suggestions = container.querySelector<HTMLElement>('[data-pt-suggestions]');
+    expect(suggestions?.textContent).toBe('about  archive');
+    expect(suggestions?.getAttribute('role')).toBe('status');
+    expect(suggestions?.getAttribute('aria-live')).toBe('polite');
+    expect(input.getAttribute('aria-describedby')).toBe(suggestions?.id);
 
     await type(input, 'wh');
     await press(input, 'Tab');
     expect(input.value).toBe('about');
+    expect(input.hasAttribute('aria-describedby')).toBe(false);
 
     await type(input, 'missing');
     const unmatchedTab = await press(input, 'Tab');
