@@ -401,7 +401,7 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
-  it('keeps concurrent terminals and their persisted histories independent', async () => {
+  it('keeps concurrent terminals with overlapping commands and distinct configs independent', async () => {
     const teemoStorageKey = 'teemo-dom-instance';
     const scoutStorageKey = 'scout-dom-instance';
     const teemoHistoryKey = createTerminalStorageKey(teemoStorageKey, 'history');
@@ -414,24 +414,28 @@ describe('createTerminal', () => {
     document.body.append(teemoMount, scoutMount);
     const teemoTerminal = createTerminal(teemoMount, {
       includeBuiltIns: false,
+      prompt: 'teemo@portfolio:~ $',
       storage: { enabled: true, key: teemoStorageKey, persistHistory: true },
       commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
     });
     const scoutTerminal = createTerminal(scoutMount, {
       includeBuiltIns: false,
+      prompt: 'scout@portfolio:~ $',
       storage: { enabled: true, key: scoutStorageKey, persistHistory: true },
-      commands: [{ name: 'status', response: { type: 'text', value: 'Scout status: ready.' } }],
+      commands: [{ name: 'about', response: { type: 'text', value: 'Scout status: ready.' } }],
     });
 
     await teemoTerminal.run('about');
-    await scoutTerminal.run('status');
+    await scoutTerminal.run('about');
 
+    expect(teemoMount.textContent).toContain('teemo@portfolio:~ $ about');
     expect(teemoMount.textContent).toContain('Captain Teemo on duty.');
     expect(teemoMount.textContent).not.toContain('Scout status: ready.');
+    expect(scoutMount.textContent).toContain('scout@portfolio:~ $ about');
     expect(scoutMount.textContent).toContain('Scout status: ready.');
     expect(scoutMount.textContent).not.toContain('Captain Teemo on duty.');
     expect(window.localStorage.getItem(teemoHistoryKey)).toBe(JSON.stringify(['about']));
-    expect(window.localStorage.getItem(scoutHistoryKey)).toBe(JSON.stringify(['status']));
+    expect(window.localStorage.getItem(scoutHistoryKey)).toBe(JSON.stringify(['about']));
 
     teemoTerminal.destroy();
     scoutTerminal.destroy();
