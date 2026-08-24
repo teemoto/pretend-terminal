@@ -47,6 +47,7 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   output.setAttribute('role', 'log');
   output.setAttribute('aria-label', 'Terminal output');
   output.setAttribute('aria-live', 'polite');
+  output.setAttribute('aria-relevant', 'additions text');
 
   const suggestions = document.createElement('div');
   suggestions.className = 'pt-completion-suggestions';
@@ -78,17 +79,23 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   const engine = createTerminalEngine(config, {
     storage: config.storage?.enabled ? createBrowserStorageAdapter() : undefined,
   });
-  let renderedTranscriptLength = -1;
+  let renderedTranscriptLength = 0;
   const unsubscribe = engine.subscribe((state) => {
     for (const [token, value] of Object.entries(state.theme.tokens)) {
       root.style.setProperty(`--pt-theme-${toKebabCase(token)}`, value);
     }
 
-    output.replaceChildren(
-      ...state.transcript.map((entry) =>
-        renderTranscriptEntry(document, entry, prompt.textContent ?? ''),
-      ),
-    );
+    const transcriptChanged = renderedTranscriptLength !== state.transcript.length;
+    if (state.transcript.length < renderedTranscriptLength) {
+      output.replaceChildren();
+    } else if (transcriptChanged) {
+      output.append(
+        ...state.transcript
+          .slice(renderedTranscriptLength)
+          .map((entry) => renderTranscriptEntry(document, entry, prompt.textContent ?? '')),
+      );
+    }
+    renderedTranscriptLength = state.transcript.length;
     input.value = state.input;
     if (document.activeElement === input) {
       input.setSelectionRange(input.value.length, input.value.length);
@@ -99,8 +106,7 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
     pending.textContent = state.isExecuting ? 'Running…' : '';
     root.toggleAttribute('data-pt-executing', state.isExecuting);
 
-    if (renderedTranscriptLength !== state.transcript.length) {
-      renderedTranscriptLength = state.transcript.length;
+    if (transcriptChanged) {
       if (config.height) {
         root.scrollTop = root.scrollHeight;
       } else {

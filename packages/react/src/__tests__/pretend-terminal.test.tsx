@@ -33,6 +33,10 @@ describe('PretendTerminal', () => {
     expect(container.querySelector('[data-pt-output]')?.getAttribute('aria-label')).toBe(
       'Terminal output',
     );
+    expect(container.querySelector('[data-pt-output]')?.getAttribute('aria-live')).toBe('polite');
+    expect(container.querySelector('[data-pt-output]')?.getAttribute('aria-relevant')).toBe(
+      'additions text',
+    );
     expect(input.getAttribute('aria-label')).toBe('Terminal command');
     expect(input.value).toBe('');
 

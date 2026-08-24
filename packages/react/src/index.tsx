@@ -114,6 +114,7 @@ export function PretendTerminal({
         role="log"
         aria-label="Terminal output"
         aria-live="polite"
+        aria-relevant="additions text"
       >
         {state.transcript.map((entry, index) => (
           <TranscriptEntry

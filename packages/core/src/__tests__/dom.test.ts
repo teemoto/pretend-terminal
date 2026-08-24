@@ -23,10 +23,33 @@ describe('createTerminal', () => {
     expect(root?.getAttribute('aria-label')).toBe('Teemo terminal');
     expect(output?.getAttribute('role')).toBe('log');
     expect(output?.getAttribute('aria-label')).toBe('Terminal output');
+    expect(output?.getAttribute('aria-live')).toBe('polite');
+    expect(output?.getAttribute('aria-relevant')).toBe('additions text');
     expect(input).toBeInstanceOf(HTMLInputElement);
     expect(input?.getAttribute('aria-label')).toBe('Terminal command');
     expect(mount.textContent).toContain('teemo@portfolio:~ $ about');
     expect(mount.textContent).toContain('Captain Teemo on duty.');
+
+    terminal.destroy();
+  });
+
+  it('appends new transcript entries without replacing earlier log content', async () => {
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [
+        { name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } },
+        { name: 'status', response: { type: 'success', value: 'Scout status: ready.' } },
+      ],
+    });
+
+    await terminal.run('about');
+    const firstCommand = mount.querySelector('.pt-command');
+    await terminal.run('status');
+
+    expect(mount.querySelector('.pt-command')).toBe(firstCommand);
+    expect(mount.textContent).toContain('Captain Teemo on duty.');
+    expect(mount.textContent).toContain('Scout status: ready.');
 
     terminal.destroy();
   });
