@@ -29,7 +29,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 
 ## React example
 
-1. Confirm the terminal renders in its custom dark-blue Teemo theme with rounded corners, a larger font, no input outline after clicking it, and a fixed height.
+1. Confirm the terminal renders in its custom dark-blue Teemo token theme. Its Teemo class should also scope the larger font, rounded corners, and border override; it should have no input outline after clicking and a fixed height.
 2. Enter `help`, `about`, and `stack`. Confirm built-ins, line output, and the table render.
 3. Enter `status`. Confirm the pending indicator appears, then the success output renders.
 4. Enter an unconfigured command such as `dance`. Confirm the page event message reports the unknown command.

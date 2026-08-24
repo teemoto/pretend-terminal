@@ -71,7 +71,6 @@ function App() {
         {...terminalConfig}
         ariaLabel="Teemo portfolio terminal"
         className="teemo-terminal"
-        style={{ '--pt-radius': '0.875rem', '--pt-font-size': '1rem' } as never}
         onCommand={(command) => setEventMessage(`Submitted: ${command}`)}
         onUnknownCommand={(command) => setEventMessage(`Unknown command: ${command}`)}
       />

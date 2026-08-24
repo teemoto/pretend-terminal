@@ -36,6 +36,10 @@ body {
 }
 
 .teemo-terminal {
+  --pt-border: #334155;
+  --pt-font-size: 1rem;
+  --pt-radius: 0.875rem;
+
   box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%);
 }
 
