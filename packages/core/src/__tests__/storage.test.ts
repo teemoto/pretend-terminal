@@ -2,14 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createBrowserStorageAdapter,
-  createMemoryStorageAdapter,
   createSafeStorageAdapter,
   createTerminalStorageKey,
 } from '../index.js';
 
 describe('storage adapters', () => {
-  it('keeps fallback values in memory when no browser storage is supplied', () => {
-    const storage = createMemoryStorageAdapter();
+  it('keeps persistence in memory when browser storage is unavailable', () => {
+    const storage = createSafeStorageAdapter();
 
     storage.set('teemo', 'ready');
     expect(storage.get('teemo')).toBe('ready');
@@ -17,23 +16,43 @@ describe('storage adapters', () => {
     expect(storage.get('teemo')).toBeNull();
   });
 
-  it('falls back without throwing when a browser storage operation is blocked', () => {
-    const blockedStorage = {
+  it('keeps persistence available when privacy settings block every storage operation', () => {
+    const privacyRestrictedStorage = {
       getItem() {
-        throw new Error('blocked');
+        throw new Error('storage access denied');
       },
       setItem() {
-        throw new Error('blocked');
+        throw new Error('storage access denied');
       },
       removeItem() {
-        throw new Error('blocked');
+        throw new Error('storage access denied');
       },
     };
-    const storage = createSafeStorageAdapter(blockedStorage);
+    const storage = createSafeStorageAdapter(privacyRestrictedStorage);
 
     storage.set('teemo', 'ready');
     expect(storage.get('teemo')).toBe('ready');
     expect(() => storage.remove('teemo')).not.toThrow();
+  });
+
+  it('keeps persistence available when browser storage rejects quota-limited writes', () => {
+    const quotaLimitedStorage = {
+      getItem() {
+        return null;
+      },
+      setItem() {
+        throw new Error('quota exceeded');
+      },
+      removeItem() {
+        throw new Error('quota exceeded');
+      },
+    };
+    const storage = createSafeStorageAdapter(quotaLimitedStorage);
+
+    storage.set('teemo', 'ready');
+    expect(storage.get('teemo')).toBe('ready');
+    expect(() => storage.remove('teemo')).not.toThrow();
+    expect(storage.get('teemo')).toBeNull();
   });
 
   it('creates versioned keys scoped to the consumer storage key', () => {

@@ -49,6 +49,7 @@ export function createMemoryStorageAdapter(): TerminalStorageAdapter {
  */
 export function createSafeStorageAdapter(storage?: StorageLike): TerminalStorageAdapter {
   const fallback = createMemoryStorageAdapter();
+  const fallbackKeys = new Set<string>();
 
   if (!storage) {
     return fallback;
@@ -56,6 +57,10 @@ export function createSafeStorageAdapter(storage?: StorageLike): TerminalStorage
 
   return {
     get(key) {
+      if (fallbackKeys.has(key)) {
+        return fallback.get(key);
+      }
+
       try {
         return storage.getItem(key);
       } catch {
@@ -65,16 +70,22 @@ export function createSafeStorageAdapter(storage?: StorageLike): TerminalStorage
     set(key, value) {
       try {
         storage.setItem(key, value);
+        fallback.remove(key);
+        fallbackKeys.delete(key);
       } catch {
         fallback.set(key, value);
+        fallbackKeys.add(key);
       }
     },
     remove(key) {
       try {
         storage.removeItem(key);
       } catch {
-        fallback.remove(key);
+        // The in-memory value still needs to be cleared even when browser storage is blocked.
       }
+
+      fallback.remove(key);
+      fallbackKeys.delete(key);
     },
   };
 }
