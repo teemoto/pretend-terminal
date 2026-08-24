@@ -419,6 +419,49 @@ describe('PretendTerminal', () => {
     await act(async () => root.unmount());
   });
 
+  it('can be removed and recreated without retaining a prior transcript', async () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[{ name: 'about', response: { type: 'text', value: 'First scout report.' } }]}
+        />,
+      );
+    });
+    const firstInput = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!firstInput) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(firstInput, 'about');
+    await press(firstInput, 'Enter');
+    expect(container.textContent).toContain('First scout report.');
+
+    await act(async () => root.render(null));
+    expect(container.querySelector('[data-pt-root]')).toBeNull();
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[{ name: 'status', response: { type: 'text', value: 'Fresh scout report.' } }]}
+        />,
+      );
+    });
+    const secondInput = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!secondInput) {
+      throw new Error('Expected a terminal input.');
+    }
+    expect(container.textContent).not.toContain('First scout report.');
+    await type(secondInput, 'status');
+    await press(secondInput, 'Enter');
+    expect(container.textContent).toContain('Fresh scout report.');
+
+    await act(async () => root.unmount());
+  });
+
   it('invokes command callbacks once with the submitted input', async () => {
     const onCommand = vi.fn();
     const onUnknownCommand = vi.fn();

@@ -271,6 +271,29 @@ describe('createTerminal', () => {
     );
   });
 
+  it('can be repeatedly destroyed and recreated without retaining a prior transcript', async () => {
+    const mount = document.createElement('div');
+    const sibling = document.createElement('p');
+    sibling.textContent = 'Keep me';
+    mount.append(sibling);
+
+    for (const response of ['First scout report.', 'Second scout report.', 'Final scout report.']) {
+      const terminal = createTerminal(mount, {
+        includeBuiltIns: false,
+        commands: [{ name: 'status', response: { type: 'text', value: response } }],
+      });
+
+      expect(mount.querySelectorAll('[data-pt-root]')).toHaveLength(1);
+      await terminal.run('status');
+      expect(mount.textContent).toContain(response);
+
+      terminal.destroy();
+      expect(mount.querySelector('[data-pt-root]')).toBeNull();
+      expect(mount.contains(sibling)).toBe(true);
+      expect(mount.textContent).not.toContain(response);
+    }
+  });
+
   it('submits input, browses history, completes commands, and clears from the keyboard', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, {
