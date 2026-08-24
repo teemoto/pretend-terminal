@@ -128,7 +128,7 @@ describe('createTerminalEngine', () => {
     });
   });
 
-  it('serializes asynchronous commands and exposes execution state', async () => {
+  it('rejects concurrent asynchronous commands and exposes execution state', async () => {
     let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
     const engine = createTerminalEngine({
       includeBuiltIns: false,
@@ -148,6 +148,7 @@ describe('createTerminalEngine', () => {
     const running = engine.run('status');
 
     expect(engine.getState().isExecuting).toBe(true);
+    await expect(engine.run('status')).resolves.toEqual({ status: 'busy' });
     await expect(engine.run('status')).resolves.toEqual({ status: 'busy' });
 
     resolveStatus?.({ type: 'success', value: 'Ready.' });

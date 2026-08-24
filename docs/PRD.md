@@ -79,7 +79,7 @@ Both packages use TypeScript, publish ESM builds, and expose their relevant type
 
 ### 8.2 Input and keyboard behavior
 
-- **Enter:** execute the non-empty input and clear the input afterward.
+- **Enter:** execute the non-empty input and clear the input afterward. While an async handler is running, later submissions are ignored rather than queued; their input remains available to retry after the handler completes.
 - **Arrow Up / Arrow Down:** navigate command history.
 - **Tab:** complete a unique matching command; if several commands match, reveal suggestions without execution.
 - **Ctrl/Cmd + L:** clear visible terminal output.

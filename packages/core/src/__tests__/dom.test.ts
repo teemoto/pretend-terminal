@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createTerminal, createTerminalStorageKey, TerminalMountError } from '../index.js';
 
@@ -252,6 +252,48 @@ describe('createTerminal', () => {
     expect(mount.textContent).toContain('Command failed. Please try again.');
     expect(mount.textContent).not.toContain('secret implementation detail');
 
+    terminal.destroy();
+  });
+
+  it('ignores repeated Enter presses while async work is pending and preserves retry input', async () => {
+    let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
+    const handler = vi.fn(
+      () =>
+        new Promise<{ type: 'success'; value: string }>((resolve) => {
+          resolveStatus = resolve;
+        }),
+    );
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [{ name: 'status', handler }],
+    });
+    const input = mount.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+
+    input.value = 'status';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    );
+    input.value = 'status';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    );
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(mount.querySelectorAll('.pt-command')).toHaveLength(1);
+    expect(input.value).toBe('status');
+
+    resolveStatus?.({ type: 'success', value: 'Scout status: ready.' });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(mount.textContent).toContain('Scout status: ready.');
+    expect(input.value).toBe('status');
     terminal.destroy();
   });
 
