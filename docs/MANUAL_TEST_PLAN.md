@@ -11,7 +11,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 
 ## Vanilla example
 
-1. Confirm the terminal has an Amber appearance, a Teemo prompt, no input outline after clicking it, and a fixed height.
+1. Confirm the terminal has an Amber appearance, a long Teemo prompt, no input outline after clicking it, and a fixed height.
 2. Enter `help`. Confirm built-in and configured commands are listed.
 3. Enter `about`, `projects`, `contact`, and `map`. Confirm lines, table, link, and ASCII output each render clearly.
 4. Enter `status`. Confirm `Running…` appears briefly, then a green success message replaces it.
@@ -20,8 +20,12 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 7. Type `a` and press Tab. Confirm completion choices appear. Type `ab` and press Tab; confirm it becomes `about`. Type `missing` and press Tab; focus should retain normal browser behavior because there is no match.
 8. Press Ctrl+L on Windows/Linux or Cmd+L on macOS while the terminal input is focused. Confirm the transcript clears.
 9. Click empty terminal space. Confirm the command input receives focus. Click the contact link and confirm it still behaves like a normal link.
-10. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
-11. Click each theme button. Confirm the theme changes. Refresh the page and confirm the last chosen named theme and command history restore.
+10. Enter `showcase`. Confirm long text wraps, muted/accent/success/error text remains readable, the table and link are usable, and ASCII art preserves its shape.
+11. Click each theme button (`default`, `dracula`, `matrix`, `amber`, and `light`) while the showcase output is visible. Confirm normal, muted, accent/link, success, error, and prompt text remain readable in every theme.
+12. Paste a deliberately long unknown command. Confirm its echoed command wraps cleanly without horizontal page overflow.
+13. Resize the browser below roughly 576px. Confirm the long prompt, input, table, link, and ASCII output remain readable and usable.
+14. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
+15. Refresh the page and confirm the last chosen named theme and command history restore.
 
 ## React example
 

@@ -12,7 +12,7 @@ if (!mount || !eventLog) {
 
 const terminal = createTerminal(mount, {
   ariaLabel: 'Teemo portfolio terminal',
-  prompt: 'teemo@portfolio:~ $',
+  prompt: 'teemo@portfolio:~/interface-experiments/pretend-terminal $',
   height: '30rem',
   theme: 'amber',
   storage: {
@@ -66,6 +66,36 @@ const terminal = createTerminal(mount, {
         await new Promise((resolve) => window.setTimeout(resolve, 800));
         return { type: 'success', value: 'All systems are ready.' };
       },
+    },
+    {
+      name: 'showcase',
+      description: 'Show every built-in output style',
+      response: [
+        {
+          type: 'text',
+          value:
+            'A deliberately long line confirms that terminal output wraps without creating horizontal page overflow.',
+        },
+        { type: 'muted', value: 'Muted detail for secondary information.' },
+        { type: 'accent', value: 'Accent text and links share the interactive color.' },
+        { type: 'success', value: 'Success: the scout report is ready.' },
+        { type: 'error', value: 'Error: this is a safely rendered example message.' },
+        {
+          type: 'table',
+          headers: ['Output', 'Purpose'],
+          rows: [
+            ['Text', 'Primary response'],
+            ['Table', 'Structured detail'],
+          ],
+        },
+        {
+          type: 'link',
+          label: 'Teemo profile',
+          href: 'https://example.com/teemo',
+          openInNewTab: true,
+        },
+        { type: 'ascii', value: ' /\\_/\\\n( o.o )\n > ^ <' },
+      ],
     },
   ],
   onCommand(command) {
