@@ -92,6 +92,50 @@ describe('PretendTerminal', () => {
     await act(async () => root.unmount());
   });
 
+  it('renders hostile command and output text without creating markup', async () => {
+    const payload = '<img src=x onerror=alert(1)>';
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[
+            {
+              name: 'showcase',
+              response: [
+                { type: 'text', value: payload },
+                { type: 'lines', lines: [payload] },
+                { type: 'success', value: payload },
+                { type: 'error', value: payload },
+                { type: 'muted', value: payload },
+                { type: 'accent', value: payload },
+                { type: 'table', headers: [payload], rows: [[payload]] },
+                { type: 'link', label: payload, href: 'https://example.com/teemo' },
+                { type: 'ascii', value: payload },
+              ],
+            },
+          ]}
+        />,
+      );
+    });
+
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(input, 'showcase');
+    await press(input, 'Enter');
+    await type(input, payload);
+    await press(input, 'Enter');
+
+    expect(container.querySelector('img, script')).toBeNull();
+    expect(container.textContent).toContain(payload);
+
+    await act(async () => root.unmount());
+  });
+
   it('renders safe links as anchors and leaves unsafe URLs non-interactive', async () => {
     const container = document.createElement('div');
     const root = createRoot(container);

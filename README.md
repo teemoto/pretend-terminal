@@ -189,6 +189,8 @@ The bundled themes meet the documented text and focus contrast thresholds; see t
 
 Pretend Terminal is a UI component, not a command runner. It does not access a machine’s shell, filesystem, environment variables, or network unless an application author deliberately writes a command handler that does so. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
 
+Every string in the structured output model—including command echoes, lines, table cells, link labels, and ASCII—renders as text rather than markup in both integrations.
+
 Link output accepts relative URLs and `http:`, `https:`, `mailto:`, and `tel:` URLs. Unsafe protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds the usual `noopener noreferrer` protection.
 
 ## Project roadmap

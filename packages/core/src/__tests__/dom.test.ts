@@ -155,6 +155,38 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('renders hostile command and output text without creating markup', async () => {
+    const payload = '<img src=x onerror=alert(1)>';
+    const mount = document.createElement('div');
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'showcase',
+          response: [
+            { type: 'text', value: payload },
+            { type: 'lines', lines: [payload] },
+            { type: 'success', value: payload },
+            { type: 'error', value: payload },
+            { type: 'muted', value: payload },
+            { type: 'accent', value: payload },
+            { type: 'table', headers: [payload], rows: [[payload]] },
+            { type: 'link', label: payload, href: 'https://example.com/teemo' },
+            { type: 'ascii', value: payload },
+          ],
+        },
+      ],
+    });
+
+    await terminal.run('showcase');
+    await terminal.run(payload);
+
+    expect(mount.querySelector('img, script')).toBeNull();
+    expect(mount.textContent).toContain(payload);
+
+    terminal.destroy();
+  });
+
   it('renders allowed links with safe browser semantics and leaves unsafe URLs non-interactive', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, {
