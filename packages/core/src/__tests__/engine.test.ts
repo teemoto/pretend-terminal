@@ -300,6 +300,28 @@ describe('createTerminalEngine', () => {
     expect(engine.getState().input).toBe('');
   });
 
+  it('keeps a long session transcript while retaining only the configured recent history', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      historyLimit: 3,
+      commands: [{ name: 'status', response: { type: 'text', value: 'Scout status: ready.' } }],
+    });
+
+    for (let submission = 0; submission < 120; submission += 1) {
+      await engine.run('status');
+    }
+
+    const state = engine.getState();
+    expect(state.transcript).toHaveLength(240);
+    expect(state.transcript[0]).toEqual({ kind: 'command', value: 'status' });
+    expect(state.transcript.at(-1)).toEqual({
+      kind: 'output',
+      output: { type: 'text', value: 'Scout status: ready.' },
+    });
+    expect(state.history).toEqual(['status', 'status', 'status']);
+    expect(engine.navigateHistory('previous')).toBe('status');
+  });
+
   it('rejects an invalid history limit at initialization', () => {
     expect(() => createTerminalEngine({ historyLimit: -1 })).toThrow(
       new TerminalEngineError('historyLimit must be a non-negative safe integer.'),
