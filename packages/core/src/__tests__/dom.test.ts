@@ -72,6 +72,32 @@ describe('createTerminal', () => {
     terminal.destroy();
   });
 
+  it('keeps the command input focused after rendering a response', async () => {
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+    });
+    const input = mount.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+
+    input.focus();
+    input.value = 'about';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    );
+
+    expect(document.activeElement).toBe(input);
+    expect(mount.textContent).toContain('Captain Teemo on duty.');
+
+    terminal.destroy();
+    mount.remove();
+  });
+
   it('uses the terminal as the scrolling container when a fixed height is configured', async () => {
     const mount = document.createElement('div');
     const terminal = createTerminal(mount, { height: '28rem' });

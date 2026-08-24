@@ -222,10 +222,12 @@ describe('PretendTerminal', () => {
       throw new Error('Expected a terminal input.');
     }
 
+    input.focus();
     await type(input, 'about');
     await press(input, 'Enter');
     expect(container.textContent).toContain('Captain Teemo.');
     expect(input.value).toBe('');
+    expect(document.activeElement).toBe(input);
 
     await type(input, 'draft');
     await press(input, 'ArrowUp');
