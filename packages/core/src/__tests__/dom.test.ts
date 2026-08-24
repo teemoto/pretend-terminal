@@ -16,10 +16,15 @@ describe('createTerminal', () => {
 
     await terminal.run('about');
 
-    expect(mount.querySelector('[data-pt-root]')?.getAttribute('aria-label')).toBe(
-      'Teemo terminal',
-    );
-    expect(mount.querySelector('[data-pt-input]')).toBeInstanceOf(HTMLInputElement);
+    const root = mount.querySelector('[data-pt-root]');
+    const output = mount.querySelector('[data-pt-output]');
+    const input = mount.querySelector('[data-pt-input]');
+    expect(root?.getAttribute('role')).toBe('region');
+    expect(root?.getAttribute('aria-label')).toBe('Teemo terminal');
+    expect(output?.getAttribute('role')).toBe('log');
+    expect(output?.getAttribute('aria-label')).toBe('Terminal output');
+    expect(input).toBeInstanceOf(HTMLInputElement);
+    expect(input?.getAttribute('aria-label')).toBe('Terminal command');
     expect(mount.textContent).toContain('teemo@portfolio:~ $ about');
     expect(mount.textContent).toContain('Captain Teemo on duty.');
 

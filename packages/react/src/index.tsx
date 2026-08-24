@@ -107,7 +107,14 @@ export function PretendTerminal({
         inputRef.current?.focus();
       }}
     >
-      <div ref={outputRef} className="pt-output pt-output-log" data-pt-output="" aria-live="polite">
+      <div
+        ref={outputRef}
+        className="pt-output pt-output-log"
+        data-pt-output=""
+        role="log"
+        aria-label="Terminal output"
+        aria-live="polite"
+      >
         {state.transcript.map((entry, index) => (
           <TranscriptEntry
             key={index}

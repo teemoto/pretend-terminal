@@ -28,6 +28,12 @@ describe('PretendTerminal', () => {
       throw new Error('Expected a terminal input.');
     }
     expect(terminal?.getAttribute('aria-label')).toBe('Teemo terminal');
+    expect(terminal?.getAttribute('role')).toBe('region');
+    expect(container.querySelector('[data-pt-output]')?.getAttribute('role')).toBe('log');
+    expect(container.querySelector('[data-pt-output]')?.getAttribute('aria-label')).toBe(
+      'Terminal output',
+    );
+    expect(input.getAttribute('aria-label')).toBe('Terminal command');
     expect(input.value).toBe('');
 
     await type(input, 'about');

@@ -165,7 +165,7 @@ Persistence is opt-in and browser-only.
 ### 8.8 Accessibility
 
 - Use a real `<input>` for command entry.
-- Give the terminal and output areas useful accessible labels.
+- Expose the terminal as a labelled `region`, its transcript as a labelled `log`, and the real input as `Terminal command`.
 - Preserve standard input editing and focus behavior.
 - Make all documented keyboard controls usable without a mouse.
 - Respect `prefers-reduced-motion` if animated scrolling, cursors, or transitions are introduced.

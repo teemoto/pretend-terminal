@@ -44,6 +44,8 @@ export function createTerminal(element: Element, config: TerminalDomConfig = {})
   const output = document.createElement('div');
   output.className = 'pt-output pt-output-log';
   output.dataset.ptOutput = '';
+  output.setAttribute('role', 'log');
+  output.setAttribute('aria-label', 'Terminal output');
   output.setAttribute('aria-live', 'polite');
 
   const suggestions = document.createElement('div');
