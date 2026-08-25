@@ -372,6 +372,22 @@ Command handlers are application-owned JavaScript or TypeScript. A handler may c
 
 Unsafe link protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds `noopener noreferrer`. Handler failures render the generic `Command failed. Please try again.` message rather than exposing thrown error details.
 
+## Accessibility
+
+Both renderers use a real text input rather than `contenteditable` or a canvas. The terminal root is a labelled `region` (`ariaLabel` defaults to `Pretend terminal`); its transcript is a labelled, polite `log`; and the command field is named `Terminal command`.
+
+New transcript additions are announced politely without re-announcing earlier output. Submitted command echoes, unknown-command responses, and safe handler-error responses all appear in that log. While completion suggestions are visible, they are announced as a `status` and associated with the command input; pending async work also appears as a `status`.
+
+| Control                                 | Result                                                                                  |
+| --------------------------------------- | --------------------------------------------------------------------------------------- |
+| Click empty terminal space              | Focuses the command input without interfering with links or other interactive elements. |
+| Enter                                   | Submits non-empty input.                                                                |
+| Arrow Up / Arrow Down                   | Browse retained command history.                                                        |
+| Tab                                     | Complete a unique command or announce multiple matching suggestions.                    |
+| Ctrl+L (Windows/Linux) or Cmd+L (macOS) | Clear visible transcript output.                                                        |
+
+Focus remains on the command input after output renders, so a keyboard visitor can continue typing. Built-in themes meet the documented text and focus contrast thresholds; review custom token overrides with your own accessibility requirements.
+
 ## Troubleshooting
 
 | Symptom                                                                          | Check                                                                                                                                                                                                                                                                                   |
