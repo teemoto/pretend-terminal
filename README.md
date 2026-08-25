@@ -357,13 +357,20 @@ The vanilla renderer accesses browser storage only when it mounts and persistenc
 
 ## Security model
 
-Pretend Terminal is a UI component, not a command runner. Its packages do not execute a shell command, read a filesystem or environment variable, or make network requests. The only browser storage access is opt-in history/theme persistence through `localStorage`.
+Pretend Terminal is a UI component, not a command runner. Its security boundary is deliberately narrow:
 
-Command handlers are application-owned code. A handler may choose to call an API, but that request belongs to the consuming application—not Pretend Terminal—and should follow the application’s own security and privacy rules. Static text is rendered safely; arbitrary HTML and Markdown rendering are outside v1.
+| Pretend Terminal guarantees                                                           | The consuming application remains responsible for                                                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| It never executes a shell command or reads a host filesystem or environment variable. | Deciding which commands and static configuration are appropriate for visitors.                                            |
+| Its packages never make network requests.                                             | Any request, authentication, authorization, rate limit, and privacy policy inside an application-owned handler.           |
+| It renders command echoes and every structured-output string as text, not HTML.       | Avoiding sensitive data in handler responses; safe rendering does not make disclosed data private.                        |
+| It accepts only structured output; arbitrary HTML and Markdown are outside v1.        | Treating remotely sourced configuration as application data and validating it according to the application’s trust model. |
+| It permits only relative, `http:`, `https:`, `mailto:`, and `tel:` link targets.      | The destination and content of allowed links.                                                                             |
+| Its only platform storage is opt-in history/theme persistence through `localStorage`. | Choosing an appropriate storage key and whether persistence is suitable for the site.                                     |
 
-Every string in the structured output model—including command echoes, lines, table cells, link labels, and ASCII—renders as text rather than markup in both integrations.
+Command handlers are application-owned JavaScript or TypeScript. A handler may call an API, but that call belongs to the consuming application—not Pretend Terminal. Keep handlers explicit in source code; JSON configuration supports only static commands and cannot define executable behavior.
 
-Link output accepts relative URLs and `http:`, `https:`, `mailto:`, and `tel:` URLs. Unsafe protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds the usual `noopener noreferrer` protection.
+Unsafe link protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds `noopener noreferrer`. Handler failures render the generic `Command failed. Please try again.` message rather than exposing thrown error details.
 
 ## Project roadmap
 
