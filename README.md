@@ -116,6 +116,99 @@ terminal.destroy();
 
 The lower-level `createTerminalEngine` export is DOM-independent. It exposes state subscription, input, history, completion, theme, execution, clear, and destroy controls; focus belongs to a renderer with a real input.
 
+## API reference
+
+### Shared configuration
+
+`TerminalConfig` is accepted by `createTerminal` and `PretendTerminal`.
+
+| Field                     | Type                                       | Default / behavior                                                                            |
+| ------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `prompt`                  | `string`                                   | `visitor@pretend-terminal:~ $`                                                                |
+| `height`                  | CSS length string                          | Omit for natural height; set one to keep the terminal fixed-height and internally scrollable. |
+| `commands`                | `Command[]`                                | No consumer commands.                                                                         |
+| `includeBuiltIns`         | `boolean`                                  | `true`; set `false` to remove `help`, `clear`, and `history`.                                 |
+| `theme`                   | built-in/custom theme name or token object | `default` theme.                                                                              |
+| `themes`                  | `Record<string, ThemeTokens>`              | Additional named theme token sets.                                                            |
+| `className`               | `string`                                   | Additional class on the terminal root.                                                        |
+| `historyLimit`            | non-negative safe integer                  | `100`; `0` disables command-history retention.                                                |
+| `storage`                 | persistence configuration                  | Disabled unless `enabled: true` and a non-blank `key` are supplied.                           |
+| `messages.unknownCommand` | `string`                                   | Overrides the unknown-command message; `{command}` becomes the submitted text.                |
+| `onCommand`               | `(command: string) => void`                | Called after every non-empty submission is recorded.                                          |
+| `onUnknownCommand`        | `(command: string) => void`                | Called only for an unmatched non-empty command.                                               |
+
+`storage` has the following shape:
+
+```ts
+{ enabled: false }
+// or
+{
+  enabled: true,
+  key: 'consumer-owned-terminal-key',
+  persistHistory: true,
+  persistTheme: true,
+}
+```
+
+### Commands and output
+
+Each command has a `name`, optional `aliases`, and optional `description`. It supplies exactly one of `response` or `handler`:
+
+```ts
+// JSON-compatible static command
+{
+  name: 'about',
+  aliases: ['whoami'],
+  description: 'Learn about Teemo',
+  response: { type: 'text', value: 'Captain Teemo on duty.' },
+}
+
+// Application-owned dynamic command
+{
+  name: 'status',
+  async handler({ rawInput, normalizedInput, commandName }) {
+    return { type: 'success', value: `${commandName} is ready.` };
+  },
+}
+```
+
+Handlers may return one output block or an ordered array of blocks. They receive the original submitted text, its trimmed/lowercased matching form, and the canonical command name. A thrown or rejected handler produces the safe visitor-facing message `Command failed. Please try again.`
+
+| Output `type`                         | Required fields                          | Rendering                                                  |
+| ------------------------------------- | ---------------------------------------- | ---------------------------------------------------------- |
+| `text`                                | `value`                                  | One plain-text line.                                       |
+| `lines`                               | `lines`                                  | Several plain-text lines.                                  |
+| `success`, `error`, `muted`, `accent` | `value`                                  | Semantically styled plain text.                            |
+| `table`                               | `rows`; optional `headers`               | Small text table.                                          |
+| `link`                                | `label`, `href`; optional `openInNewTab` | Safe link, or non-interactive text for an unsafe protocol. |
+| `ascii`                               | `value`                                  | Preformatted text block.                                   |
+
+### Vanilla JavaScript
+
+`createTerminal(element, config)` mounts into an existing DOM element. In addition to `TerminalConfig`, its `TerminalDomConfig` accepts `ariaLabel`, which defaults to `Pretend terminal`.
+
+It returns a `MountedTerminal` with:
+
+| Method            | Behavior                                                                |
+| ----------------- | ----------------------------------------------------------------------- |
+| `run(input)`      | Submits input programmatically and resolves to its run result.          |
+| `clear()`         | Clears the visible transcript without clearing command history.         |
+| `focus()`         | Focuses the real command input.                                         |
+| `setTheme(theme)` | Switches to a bundled, named custom, or token-object theme.             |
+| `destroy()`       | Removes this terminal’s root and listeners; subsequent API calls throw. |
+
+### React
+
+`<PretendTerminal />` accepts every `TerminalConfig` field plus:
+
+| Prop        | Type                  | Behavior                                                         |
+| ----------- | --------------------- | ---------------------------------------------------------------- |
+| `ariaLabel` | `string`              | Accessible terminal-region name; defaults to `Pretend terminal`. |
+| `className` | `string`              | Additional class on the terminal root.                           |
+| `style`     | `React.CSSProperties` | Inline styles, including public `--pt-*` CSS-variable overrides. |
+
+Treat configuration props as initialization-time values in v1. To reconfigure an existing terminal dynamically, use a custom integration built on the core engine.
+
 ## Configuration
 
 The primary API is a configuration object. Static configurations can live in a JSON file; dynamic commands use JavaScript or TypeScript.
