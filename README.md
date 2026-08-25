@@ -236,7 +236,34 @@ The [vanilla example configuration](examples/vanilla/src/terminal.config.json) i
 }
 ```
 
-The built-in `help` command generates its content from currently enabled commands. Supply your own command named `help` to replace that behavior and fully control its copy.
+## Command behavior
+
+### Matching and aliases
+
+Command names and aliases match case-insensitively after outer whitespace is trimmed. Internal whitespace is significant, and v1 treats the complete normalized input as the command key—it does not parse shell-style arguments.
+
+Aliases resolve to their command’s canonical name for completion. Every active command name and alias must be non-blank and unique; a collision raises `CommandRegistryError` during initialization. For example, an alias cannot reuse another command’s name or alias.
+
+### Built-ins and overrides
+
+`help`, `clear`, and `history` are enabled by default. Set `includeBuiltIns: false` to remove all three, or define a consumer command with the same canonical name to replace just that built-in.
+
+| Command   | Default behavior                                                                                                  |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `help`    | Shows all active commands in display order, including aliases and descriptions when supplied.                     |
+| `clear`   | Clears the visible transcript but retains command history and any persisted history.                              |
+| `history` | Shows retained session history oldest-first with one-based numbering, including the current `history` submission. |
+
+Defining your own `help` command replaces generated help completely, which is useful when you want to control its wording or format.
+
+### Keyboard interaction, completion, and history
+
+- **Enter:** submits non-empty input and echoes it before output. Only one async handler runs per terminal; later submissions while it is pending are ignored rather than queued, and their input remains available to retry.
+- **Arrow Up / Arrow Down:** browse retained history. A draft entered before browsing is restored after the newest history entry; editing or submitting input resets browsing.
+- **Tab:** matches active names and aliases by a case-insensitive, trimmed prefix. One match replaces input with the canonical command name; multiple matches show ordered suggestions; no match leaves input and normal browser Tab behavior unchanged.
+- **Ctrl+L / Cmd+L:** clears visible output on Windows/Linux and macOS respectively.
+
+History retains submitted commands, including duplicates, up to `historyLimit` (100 by default; `0` disables retention). The visible transcript is separate: it remains for the current session until `clear` or `destroy`, is never persisted, and has no automatic v1 length cap.
 
 For an unmatched command, the default response suggests `help`. Change that copy without a handler through the JSON-compatible `messages` configuration; `{command}` is replaced with the submitted input:
 
