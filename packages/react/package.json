@@ -2,7 +2,25 @@
   "name": "@pretend-terminal/react",
   "version": "0.0.0",
   "description": "React components for Pretend Terminal.",
+  "keywords": [
+    "terminal",
+    "pseudo-terminal",
+    "terminal-ui",
+    "react",
+    "react-component",
+    "portfolio",
+    "accessibility"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teemoto/pretend-terminal.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/teemoto/pretend-terminal#readme",
+  "bugs": {
+    "url": "https://github.com/teemoto/pretend-terminal/issues"
+  },
   "engines": {
     "node": ">=22.13.0"
   },

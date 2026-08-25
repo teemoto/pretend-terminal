@@ -2,7 +2,24 @@
   "name": "@pretend-terminal/core",
   "version": "0.0.0",
   "description": "Framework-independent pseudo-terminal engine and vanilla JavaScript API.",
+  "keywords": [
+    "terminal",
+    "pseudo-terminal",
+    "terminal-ui",
+    "vanilla-javascript",
+    "portfolio",
+    "accessibility"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teemoto/pretend-terminal.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/teemoto/pretend-terminal#readme",
+  "bugs": {
+    "url": "https://github.com/teemoto/pretend-terminal/issues"
+  },
   "engines": {
     "node": ">=22.13.0"
   },
