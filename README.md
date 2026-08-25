@@ -336,6 +336,25 @@ Public variables are semantic, so overrides remain stable across theme palettes:
 
 The bundled themes meet the documented text and focus contrast thresholds; see the [theme contrast audit](docs/THEME_CONTRAST.md). Custom token overrides remain the consumer’s responsibility to review.
 
+## Persistence and SSR
+
+Persistence is off by default. Enable it only with a consumer-owned key, then choose history and/or named-theme persistence independently:
+
+```ts
+storage: {
+  enabled: true,
+  key: 'teemo-portfolio-terminal',
+  persistHistory: true,
+  persistTheme: true,
+}
+```
+
+Pretend Terminal stores versioned `history` and `theme` records under that key in browser `localStorage`. Use a distinct key for each terminal that should retain separate state. History restores only valid string entries and still obeys `historyLimit`; the transcript is never stored. Selecting a named theme persists that name, while choosing a token object clears any persisted named-theme selection. Running `clear` clears visible output only, not history.
+
+Browser storage is a best-effort enhancement. Missing storage, privacy/security restrictions, malformed records, and quota failures fall back to memory without interrupting command execution; data in that fallback lasts only for the current page lifetime.
+
+The vanilla renderer accesses browser storage only when it mounts and persistence is enabled. `PretendTerminal` does not access `localStorage` during server rendering: it first renders from its supplied configuration, then hydrates opt-in persistence in a client-side effect. The headless `createTerminalEngine` never accesses storage unless you explicitly pass a storage adapter in its options.
+
 ## Security model
 
 Pretend Terminal is a UI component, not a command runner. Its packages do not execute a shell command, read a filesystem or environment variable, or make network requests. The only browser storage access is opt-in history/theme persistence through `localStorage`.
