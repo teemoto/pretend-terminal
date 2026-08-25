@@ -34,6 +34,10 @@ Read the complete scope, constraints, and success criteria in the [v1 product re
 
 For local visual testing, the repository includes vanilla and React Vite examples. See the [manual test plan](docs/MANUAL_TEST_PLAN.md).
 
+## Releases and changelog
+
+Published release notes live in [CHANGELOG.md](CHANGELOG.md). This monorepo uses [Changesets](https://github.com/changesets/changesets): consumer-visible package changes receive a Changeset, `corepack pnpm version-packages` applies the approved version bumps and generates package-specific changelogs, and `corepack pnpm release` publishes only after the repository owner explicitly approves it. Publishing is never part of CI.
+
 ## Install after the first release
 
 Pretend Terminal requires Node.js `>=22.13.0` for installation and build tooling. The React package supports React `>=18.0.0`.

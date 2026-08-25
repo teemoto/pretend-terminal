@@ -10,14 +10,17 @@
   },
   "scripts": {
     "build": "corepack pnpm --recursive --if-present run build",
+    "changeset": "changeset",
     "clean": "corepack pnpm --recursive --if-present run clean",
     "dev:react": "corepack pnpm --filter @pretend-terminal/example-react dev",
     "dev:vanilla": "corepack pnpm --filter @pretend-terminal/example-vanilla dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
+    "release": "changeset publish",
     "test": "corepack pnpm --recursive --if-present run test",
-    "typecheck": "corepack pnpm --filter @pretend-terminal/core build && corepack pnpm --recursive --if-present run typecheck"
+    "typecheck": "corepack pnpm --filter @pretend-terminal/core build && corepack pnpm --recursive --if-present run typecheck",
+    "version-packages": "changeset version"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
