@@ -293,7 +293,17 @@ For application behavior beyond static content, commands may provide a handler:
 
 ## Theming
 
-The core already resolves the `default`, `dracula`, `matrix`, `amber`, and `light` presets into semantic tokens. A renderer will apply those tokens as CSS variables, so a site can override individual values without recreating every style.
+Set `theme` to one of the five bundled presets, a consumer-defined name from `themes`, or a partial `ThemeTokens` object. A partial object inherits omitted values from the default preset.
+
+| Preset    | Character                                    |
+| --------- | -------------------------------------------- |
+| `default` | Muted dark terminal with cool accent colors. |
+| `dracula` | The familiar purple Dracula palette.         |
+| `matrix`  | High-contrast green-on-near-black terminal.  |
+| `amber`   | Warm amber CRT-inspired palette.             |
+| `light`   | Bright, readable light-surface terminal.     |
+
+Renderers apply the resolved theme through internal `--pt-theme-*` variables. Override the public `--pt-*` variables on the terminal root to take precedence over any selected preset:
 
 ```css
 .my-terminal {
@@ -305,14 +315,24 @@ The core already resolves the `default`, `dracula`, `matrix`, `amber`, and `ligh
 }
 ```
 
-Public tokens are semantic, so overrides remain stable across theme palettes:
+Public variables are semantic, so overrides remain stable across theme palettes:
 
-| Tokens                                                                                  | Meaning                                      |
-| --------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `--pt-background`, `--pt-surface`, `--pt-text`, `--pt-muted`, `--pt-border`             | Terminal surfaces and standard text.         |
-| `--pt-prompt-user`, `--pt-prompt-host`, `--pt-prompt-path`, `--pt-prompt-symbol`        | Prompt segments for custom prompt renderers. |
-| `--pt-accent`, `--pt-success`, `--pt-error`                                             | Interactive, positive, and error states.     |
-| `--pt-font-family`, `--pt-font-size`, `--pt-line-height`, `--pt-radius`, `--pt-spacing` | Typography and layout scale.                 |
+| Variables                                                                        | Meaning                                                                                                                           |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `--pt-background`                                                                | Terminal background.                                                                                                              |
+| `--pt-surface`                                                                   | Raised/table-header surface.                                                                                                      |
+| `--pt-text`                                                                      | Standard text.                                                                                                                    |
+| `--pt-muted`                                                                     | Secondary text, completion suggestions, and pending status.                                                                       |
+| `--pt-border`                                                                    | Terminal and table borders.                                                                                                       |
+| `--pt-prompt-user`, `--pt-prompt-host`, `--pt-prompt-path`, `--pt-prompt-symbol` | Reserved semantic prompt tokens for custom integration styles. The v1 built-in renderers display `prompt` as one accented string. |
+| `--pt-accent`                                                                    | Command echoes, prompt text, links, table headers, and focus outline.                                                             |
+| `--pt-success`                                                                   | `success` output.                                                                                                                 |
+| `--pt-error`                                                                     | `error` output.                                                                                                                   |
+| `--pt-font-family`                                                               | Terminal font family.                                                                                                             |
+| `--pt-font-size`                                                                 | Terminal font size.                                                                                                               |
+| `--pt-line-height`                                                               | Terminal line height.                                                                                                             |
+| `--pt-radius`                                                                    | Terminal border radius.                                                                                                           |
+| `--pt-spacing`                                                                   | Terminal padding and internal spacing scale.                                                                                      |
 
 The bundled themes meet the documented text and focus contrast thresholds; see the [theme contrast audit](docs/THEME_CONTRAST.md). Custom token overrides remain the consumer’s responsibility to review.
 
