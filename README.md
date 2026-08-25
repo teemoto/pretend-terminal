@@ -6,14 +6,9 @@
 
 Pretend Terminal lets people add a terminal-inspired interface to a website without embedding a real shell, server execution, or unsafe HTML rendering. It is designed for portfolios, documentation sites, product demos, onboarding flows, and playful developer experiences.
 
-The project will ship as a framework-independent core package and a first-class React integration:
+Pretend Terminal includes a framework-independent core package and a first-class React integration.
 
-```sh
-npm install @pretend-terminal/core
-npm install @pretend-terminal/react
-```
-
-> **Project status:** pre-release. The public API and examples below describe the intended v1 experience; packages are not yet published.
+> **Project status:** pre-release. The v1 API and examples are implemented in this repository; the packages have not been published yet.
 
 ## Why Pretend Terminal?
 
@@ -23,7 +18,7 @@ npm install @pretend-terminal/react
 - **Themeable.** Start from included themes or override semantic CSS variables to match your site.
 - **Accessible.** The terminal will use real inputs and keyboard-first interactions rather than a canvas or contenteditable imitation.
 
-## Planned v1 features
+## v1 features
 
 - Vanilla JavaScript mounting API and React component.
 - Configurable commands, aliases, descriptions, and structured responses.
@@ -39,7 +34,21 @@ Read the complete scope, constraints, and success criteria in the [v1 product re
 
 For local visual testing, the repository includes vanilla and React Vite examples. See the [manual test plan](docs/MANUAL_TEST_PLAN.md).
 
-## Intended usage
+## Install after the first release
+
+Pretend Terminal requires Node.js `>=22.13.0` for installation and build tooling. The React package supports React `>=18.0.0`.
+
+Once `0.1.0` is published, install the package for your integration:
+
+```sh
+# Vanilla JavaScript
+npm install @pretend-terminal/core
+
+# React (installs the shared core package as a dependency)
+npm install @pretend-terminal/react
+```
+
+## Usage
 
 ### Vanilla JavaScript
 

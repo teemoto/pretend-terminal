@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Framework-independent pseudo-terminal engine and vanilla JavaScript API.",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "type": "module",
   "exports": {
     ".": {
