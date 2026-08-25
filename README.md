@@ -372,6 +372,16 @@ Command handlers are application-owned JavaScript or TypeScript. A handler may c
 
 Unsafe link protocols such as `javascript:` and `data:` render as plain label text. Links stay in the current tab by default; `openInNewTab: true` adds `noopener noreferrer`. Handler failures render the generic `Command failed. Please try again.` message rather than exposing thrown error details.
 
+## Troubleshooting
+
+| Symptom                                                                          | Check                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The terminal has no terminal styling.                                            | Import the package stylesheet once in the same client bundle: `@pretend-terminal/core/styles.css` for vanilla or `@pretend-terminal/react/styles.css` for React. Make sure the import is not removed by a route-only or server-only entry point.                                        |
+| Initialization throws `CommandRegistryError`.                                    | Trim command names and aliases, then ensure each normalized name/alias is unique. Matching ignores outer whitespace and case, so `Info` and `info` collide. To replace a built-in, define a consumer command with that same canonical name; do not reuse it as another command’s alias. |
+| Initialization throws `ThemeResolutionError`.                                    | Use a bundled preset, pass a token object directly, or define the named preset in `themes` before selecting it with `theme`.                                                                                                                                                            |
+| History or theme does not survive a refresh.                                     | Confirm `storage.enabled` is `true`, `key` is non-blank and stable, and the matching `persistHistory` and/or `persistTheme` flag is enabled. Use one key per independent terminal.                                                                                                      |
+| Persistence still does not survive a refresh in a private or restricted browser. | This is expected when browser storage is unavailable or blocked. The terminal stays usable with an in-memory fallback, but that state ends when the page is closed or reloaded.                                                                                                         |
+
 ## Project roadmap
 
 The immediate goal is a polished, documented v1. Advanced possibilities—such as richer content, localization helpers, plug-ins, and deeper terminal emulation—are tracked separately in the [future phases](docs/PRD.md#future-phases-not-v1).
