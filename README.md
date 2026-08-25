@@ -209,6 +209,8 @@ It returns a `MountedTerminal` with:
 
 Treat configuration props as initialization-time values in v1. To reconfigure an existing terminal dynamically, use a custom integration built on the core engine.
 
+The TypeScript and TSX snippets in this README are type-checked in the public API test suites. The JSON and CSS examples are exercised by the built vanilla and React Vite examples.
+
 ## Configuration
 
 The primary API is a configuration object. Static configurations can live in a JSON file; dynamic commands use JavaScript or TypeScript.

@@ -7,12 +7,29 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createTerminalStorageKey } from '@pretend-terminal/core';
 
-import { PretendTerminal } from '../index.js';
+import { PretendTerminal, type PretendTerminalProps } from '../index.js';
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT =
   true;
 
 describe('PretendTerminal', () => {
+  it('type-checks the README React usage snippet', () => {
+    const props = {
+      prompt: 'visitor@site:~ $',
+      theme: 'matrix',
+      commands: [
+        {
+          name: 'contact',
+          description: 'Show contact details',
+          response: { type: 'text', value: 'hello@example.com' },
+        },
+      ],
+    } satisfies PretendTerminalProps;
+    const snippet = <PretendTerminal {...props} />;
+
+    expect(snippet.type).toBe(PretendTerminal);
+  });
+
   it('renders a labelled real input and retains typed input through the shared engine', async () => {
     const container = document.createElement('div');
     document.body.append(container);

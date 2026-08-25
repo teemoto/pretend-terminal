@@ -5,11 +5,63 @@ import type {
   CommandHandlerContext,
   MountedTerminal,
   TerminalConfig,
+  TerminalDomConfig,
   TerminalEngine,
   TerminalOutputBlock,
 } from '../index.js';
 
 describe('the public core type contract', () => {
+  it('type-checks the README vanilla, JSON, and dynamic-command configurations', () => {
+    const vanillaConfig = {
+      prompt: 'visitor@site:~ $',
+      height: '28rem',
+      theme: 'dracula',
+      commands: [
+        {
+          name: 'about',
+          description: 'Learn about this site',
+          response: {
+            type: 'lines',
+            lines: ['Built with Pretend Terminal.', 'Safe and browser-only.'],
+          },
+        },
+      ],
+    } satisfies TerminalDomConfig;
+    const jsonCompatibleConfig = {
+      prompt: 'teemo@portfolio:~ $',
+      theme: 'amber',
+      commands: [
+        {
+          name: 'contact',
+          aliases: ['email'],
+          description: 'Show contact details',
+          response: {
+            type: 'table',
+            rows: [
+              ['Email', 'teemo@example.com'],
+              ['GitHub', 'github.com/teemo'],
+            ],
+          },
+        },
+      ],
+    } satisfies TerminalConfig;
+    const dynamicCommand = {
+      name: 'status',
+      description: 'Check API status',
+      async handler() {
+        const response = await fetch('/api/status');
+        return {
+          type: 'success' as const,
+          value: `API status: ${response.ok ? 'online' : 'unavailable'}`,
+        };
+      },
+    } satisfies Command;
+
+    expect(vanillaConfig.commands[0]?.name).toBe('about');
+    expect(jsonCompatibleConfig.commands[0]?.aliases).toEqual(['email']);
+    expect(dynamicCommand.name).toBe('status');
+  });
+
   it('accepts the v1 structured output variants', () => {
     const output = [
       { type: 'text', value: 'Hello, Teemo.' },
