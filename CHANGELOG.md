@@ -24,4 +24,23 @@ The project has not been published yet. The first public release will be
 
 ## Unreleased
 
-No published changes yet.
+The first release will publish `@pretend-terminal/core` and
+`@pretend-terminal/react` at `0.1.0`.
+
+### v1 scope and known limitations
+
+- This is a safe terminal simulation, not a shell: it never executes visitor
+  input on the host or a server.
+- Commands match complete normalized input. Shell-style arguments, pipes, and
+  virtual filesystem behavior are not included.
+- Output is limited to the documented structured block types. Raw HTML and
+  Markdown rendering are intentionally unsupported.
+- The first-party integrations are framework-neutral core APIs and React.
+  Other framework adapters are future work.
+- In React, terminal configuration is read at initialization. To change
+  commands, theme configuration, or persistence settings later, mount a new
+  terminal or use a custom integration on the core engine. Presentation props
+  continue to update normally.
+- Persistence is opt-in and stores command history and named theme selection
+  only. It does not persist transcript output and safely falls back to an
+  in-memory session when browser storage is unavailable.
