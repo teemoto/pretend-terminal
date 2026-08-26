@@ -1,12 +1,14 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { act, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createTerminalStorageKey } from '@pretend-terminal/core';
-import '@pretend-terminal/react/styles.css';
 
 import { PretendTerminal, type PretendTerminalProps } from '../index.js';
 
@@ -14,8 +16,15 @@ import { PretendTerminal, type PretendTerminalProps } from '../index.js';
   true;
 
 describe('PretendTerminal', () => {
-  it('resolves the documented stylesheet export for TypeScript consumers', () => {
-    expect(true).toBe(true);
+  it('declares TypeScript support for the documented stylesheet export', () => {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
+      readonly exports: Record<string, unknown>;
+    };
+
+    expect(manifest.exports['./styles.css']).toEqual({
+      types: './dist/styles.d.ts',
+      import: './dist/styles.css',
+    });
   });
 
   it('type-checks the README React usage snippet', () => {

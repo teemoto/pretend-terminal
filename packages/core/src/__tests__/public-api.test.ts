@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
-import '@pretend-terminal/core/styles.css';
+import { describe, expect, it } from 'vitest';
 
 import type {
   Command,
@@ -13,8 +14,15 @@ import type {
 } from '../index.js';
 
 describe('the public core type contract', () => {
-  it('resolves the documented stylesheet export for TypeScript consumers', () => {
-    expect(true).toBe(true);
+  it('declares TypeScript support for the documented stylesheet export', () => {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
+      readonly exports: Record<string, unknown>;
+    };
+
+    expect(manifest.exports['./styles.css']).toEqual({
+      types: './dist/styles.d.ts',
+      import: './dist/styles.css',
+    });
   });
 
   it('type-checks the README vanilla, JSON, and dynamic-command configurations', () => {
