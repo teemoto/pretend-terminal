@@ -1,5 +1,13 @@
 # @pretend-terminal/react
 
+## 0.1.1
+
+### Patch Changes
+
+- Fix TypeScript resolution for the documented `styles.css` exports in both packages.
+- Updated dependencies
+  - @pretend-terminal/core@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
