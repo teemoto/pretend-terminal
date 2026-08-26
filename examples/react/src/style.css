@@ -27,6 +27,28 @@ body {
   margin: 0.25rem 0 0.5rem;
 }
 
+.theme-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.theme-controls button {
+  background: transparent;
+  border: 1px solid #475569;
+  border-radius: 0.375rem;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.375rem 0.625rem;
+}
+
+.theme-controls button[aria-pressed='true'] {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 1px #7dd3fc;
+}
+
 .eyebrow {
   color: #7dd3fc;
 }

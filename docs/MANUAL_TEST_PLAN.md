@@ -29,7 +29,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 
 ## React example
 
-1. Confirm the terminal renders in its custom dark-blue Teemo token theme. Its Teemo class should also scope the larger font, rounded corners, and border override; it should have no input outline after clicking and a fixed height.
+1. Confirm the terminal renders in the Default theme. Its Teemo class should also scope the larger font, rounded corners, and border override; it should have no input outline after clicking and a fixed height.
 2. Enter `help`, `about`, and `stack`. Confirm built-ins, line output, and the table render.
 3. Enter `status`. Confirm the pending indicator appears, then the success output renders.
 4. Enter an unconfigured command such as `dance`. Confirm the page event message reports the unknown command.
@@ -38,6 +38,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 7. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
 8. Use keyboard-only navigation: Tab to reach the input, type a command, then use Tab completion and Enter. Confirm the input caret clearly shows where typing will occur.
 9. Enter `about`, refresh the page, then press Up. Confirm the command history restores.
+10. Enter `showcase`, then click each theme button (`default`, `dracula`, `matrix`, `amber`, and `light`). Confirm normal, muted, accent/link, success, error, prompt, table, and ASCII output remain readable in every theme.
 
 ## Pass criteria
 

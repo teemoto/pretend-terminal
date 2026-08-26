@@ -61,6 +61,9 @@ importers:
 
   examples/react:
     dependencies:
+      '@pretend-terminal/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@pretend-terminal/react':
         specifier: workspace:*
         version: link:../../packages/react
