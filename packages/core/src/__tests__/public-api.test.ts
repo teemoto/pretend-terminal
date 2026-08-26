@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import '@pretend-terminal/core/styles.css';
+
 import type {
   Command,
   CommandHandlerContext,
@@ -11,6 +13,10 @@ import type {
 } from '../index.js';
 
 describe('the public core type contract', () => {
+  it('resolves the documented stylesheet export for TypeScript consumers', () => {
+    expect(true).toBe(true);
+  });
+
   it('type-checks the README vanilla, JSON, and dynamic-command configurations', () => {
     const vanillaConfig = {
       prompt: 'visitor@site:~ $',

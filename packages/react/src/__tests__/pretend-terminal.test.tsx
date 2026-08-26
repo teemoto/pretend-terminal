@@ -6,6 +6,7 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createTerminalStorageKey } from '@pretend-terminal/core';
+import '@pretend-terminal/react/styles.css';
 
 import { PretendTerminal, type PretendTerminalProps } from '../index.js';
 
@@ -13,6 +14,10 @@ import { PretendTerminal, type PretendTerminalProps } from '../index.js';
   true;
 
 describe('PretendTerminal', () => {
+  it('resolves the documented stylesheet export for TypeScript consumers', () => {
+    expect(true).toBe(true);
+  });
+
   it('type-checks the README React usage snippet', () => {
     const props = {
       prompt: 'visitor@site:~ $',
