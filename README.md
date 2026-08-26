@@ -60,7 +60,13 @@ npm install @pretend-terminal/react
 import { createTerminal } from '@pretend-terminal/core';
 import '@pretend-terminal/core/styles.css';
 
-createTerminal(document.querySelector('#terminal'), {
+const mount = document.querySelector('#terminal');
+
+if (!mount) {
+  throw new Error('Expected a terminal mount element.');
+}
+
+createTerminal(mount, {
   prompt: 'visitor@site:~ $',
   height: '28rem',
   theme: 'dracula',
@@ -109,7 +115,13 @@ export function Terminal() {
 `createTerminal` returns an instance for application-triggered interactions:
 
 ```ts
-const terminal = createTerminal(document.querySelector('#terminal'), config);
+const mount = document.querySelector('#terminal');
+
+if (!mount) {
+  throw new Error('Expected a terminal mount element.');
+}
+
+const terminal = createTerminal(mount, config);
 
 await terminal.run('about');
 terminal.setTheme('amber');
@@ -211,7 +223,7 @@ It returns a `MountedTerminal` with:
 | `className` | `string`              | Additional class on the terminal root.                           |
 | `style`     | `React.CSSProperties` | Inline styles, including public `--pt-*` CSS-variable overrides. |
 
-Treat configuration props as initialization-time values in v1. To reconfigure an existing terminal dynamically, use a custom integration built on the core engine.
+Treat `TerminalConfig` props as initialization-time values in v1. The presentation props `className`, `style`, and `ariaLabel` update normally. To reconfigure an existing terminal dynamically, use a custom integration built on the core engine.
 
 The TypeScript and TSX snippets in this README are type-checked in the public API test suites. The JSON and CSS examples are exercised by the built vanilla and React Vite examples.
 
