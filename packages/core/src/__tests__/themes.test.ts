@@ -10,6 +10,10 @@ describe('resolveTheme', () => {
       'matrix',
       'amber',
       'light',
+      'nord',
+      'tokyo-night',
+      'solarized-light',
+      'github-light',
     ]);
 
     for (const theme of Object.values(BUILT_IN_THEMES)) {

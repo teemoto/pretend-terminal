@@ -25,7 +25,7 @@ Pretend Terminal includes a framework-independent core package and a first-class
 - Built-in `help`, `clear`, and `history` commands that users can keep, override, or disable.
 - Command echo, keyboard history, Tab completion, unknown-command feedback, click-to-focus, and output auto-scroll.
 - Structured output: text, lines, status messages, tables, links, and ASCII blocks.
-- Included `default`, `dracula`, `matrix`, `amber`, and `light` themes.
+- Included `default`, `dracula`, `matrix`, `amber`, `light`, `nord`, `tokyo-night`, `solarized-light`, and `github-light` themes.
 - CSS-variable theme overrides and consumer class names.
 - Optional browser `localStorage` persistence for history and selected theme.
 - TypeScript types, tests, examples, and an MIT license.
@@ -311,15 +311,19 @@ For application behavior beyond static content, commands may provide a handler:
 
 ## Theming
 
-Set `theme` to one of the five bundled presets, a consumer-defined name from `themes`, or a partial `ThemeTokens` object. A partial object inherits omitted values from the default preset.
+Set `theme` to one of the nine bundled presets, a consumer-defined name from `themes`, or a partial `ThemeTokens` object. A partial object inherits omitted values from the default preset.
 
-| Preset    | Character                                    |
-| --------- | -------------------------------------------- |
-| `default` | Muted dark terminal with cool accent colors. |
-| `dracula` | The familiar purple Dracula palette.         |
-| `matrix`  | High-contrast green-on-near-black terminal.  |
-| `amber`   | Warm amber CRT-inspired palette.             |
-| `light`   | Bright, readable light-surface terminal.     |
+| Preset            | Character                                     |
+| ----------------- | --------------------------------------------- |
+| `default`         | Muted dark terminal with cool accent colors.  |
+| `dracula`         | The familiar purple Dracula palette.          |
+| `matrix`          | High-contrast green-on-near-black terminal.   |
+| `amber`           | Warm amber CRT-inspired palette.              |
+| `light`           | Bright, readable light-surface terminal.      |
+| `nord`            | Calm blue-gray dark palette.                  |
+| `tokyo-night`     | Deep navy with vivid cyan and purple accents. |
+| `solarized-light` | Warm, low-glare light palette.                |
+| `github-light`    | Clean, familiar developer-tool light palette. |
 
 Renderers apply the resolved theme through internal `--pt-theme-*` variables. Override the public `--pt-*` variables on the terminal root to take precedence over any selected preset:
 

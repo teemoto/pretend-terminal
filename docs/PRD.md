@@ -146,7 +146,7 @@ The packages never execute shell commands, inspect host files or environment var
 
 ### 8.6 Theme and styling
 
-- Include the `default`, `dracula`, `matrix`, `amber`, and `light` theme presets.
+- Include the `default`, `dracula`, `matrix`, `amber`, `light`, `nord`, `tokyo-night`, `solarized-light`, and `github-light` theme presets.
 - Define themes through semantic CSS variables, including background, surface, text, muted text, prompt segments, accent, success, error, border, and font family tokens.
 - Accept a preset name or a custom theme-token object.
 - Resolve custom token objects and named custom themes against the complete default token set; reject unknown named themes rather than silently changing appearance.
@@ -254,7 +254,7 @@ v1 is ready when:
 
 - `@pretend-terminal/core` and `@pretend-terminal/react` build and can be installed into their respective examples.
 - All v1 functional and quality requirements pass in CI.
-- The five built-in themes are visually verified in both example applications.
+- The nine built-in themes are visually verified in both example applications.
 - JSON configuration can customize a built-in command response without source changes.
 - Opt-in persistence works and degrades safely when unavailable.
 - The README and API documentation enable a new user to add a terminal in under ten minutes.

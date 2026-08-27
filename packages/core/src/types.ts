@@ -52,7 +52,16 @@ export type TerminalOutputBlock =
 export type TerminalOutput = TerminalOutputBlock | readonly TerminalOutputBlock[];
 
 /** The only theme names bundled with Pretend Terminal v1. */
-export type BuiltInThemeName = 'default' | 'dracula' | 'matrix' | 'amber' | 'light';
+export type BuiltInThemeName =
+  | 'default'
+  | 'dracula'
+  | 'matrix'
+  | 'amber'
+  | 'light'
+  | 'nord'
+  | 'tokyo-night'
+  | 'solarized-light'
+  | 'github-light';
 
 /** A built-in theme name or a consumer-defined theme name. */
 export type ThemeName = BuiltInThemeName | (string & {});

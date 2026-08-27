@@ -21,7 +21,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 8. Press Ctrl+L on Windows/Linux or Cmd+L on macOS while the terminal input is focused. Confirm the transcript clears.
 9. Click empty terminal space. Confirm the command input receives focus. Click the contact link and confirm it still behaves like a normal link.
 10. Enter `showcase`. Confirm long text wraps, muted/accent/success/error text remains readable, the table and link are usable, and ASCII art preserves its shape.
-11. Click each theme button (`default`, `dracula`, `matrix`, `amber`, and `light`) while the showcase output is visible. Confirm normal, muted, accent/link, success, error, and prompt text remain readable in every theme.
+11. Click each theme button (`default`, `dracula`, `matrix`, `amber`, `light`, `nord`, `tokyo-night`, `solarized-light`, and `github-light`) while the showcase output is visible. Confirm normal, muted, accent/link, success, error, and prompt text remain readable in every theme.
 12. Paste a deliberately long unknown command. Confirm its echoed command wraps cleanly without horizontal page overflow.
 13. Resize the browser below roughly 576px. Confirm the long prompt, input, table, link, and ASCII output remain readable and usable.
 14. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
@@ -38,7 +38,7 @@ Use the local examples to verify Pretend Terminal as a visitor would. Start from
 7. Run enough commands to exceed the visible transcript area. Confirm the terminal height stays fixed and its output area scrolls to the latest entry.
 8. Use keyboard-only navigation: Tab to reach the input, type a command, then use Tab completion and Enter. Confirm the input caret clearly shows where typing will occur.
 9. Enter `about`, refresh the page, then press Up. Confirm the command history restores.
-10. Enter `showcase`, then click each theme button (`default`, `dracula`, `matrix`, `amber`, and `light`). Confirm normal, muted, accent/link, success, error, prompt, table, and ASCII output remain readable in every theme.
+10. Enter `showcase`, then click each theme button (`default`, `dracula`, `matrix`, `amber`, `light`, `nord`, `tokyo-night`, `solarized-light`, and `github-light`). Confirm normal, muted, accent/link, success, error, prompt, table, and ASCII output remain readable in every theme.
 
 ## Pass criteria
 

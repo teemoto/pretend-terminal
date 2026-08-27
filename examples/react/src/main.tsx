@@ -81,7 +81,17 @@ const terminalConfig = {
   ],
 } satisfies PretendTerminalProps;
 
-const themeNames: readonly BuiltInThemeName[] = ['default', 'dracula', 'matrix', 'amber', 'light'];
+const themeNames: readonly BuiltInThemeName[] = [
+  'default',
+  'dracula',
+  'matrix',
+  'amber',
+  'light',
+  'nord',
+  'tokyo-night',
+  'solarized-light',
+  'github-light',
+];
 
 function toThemeStyle(theme: BuiltInThemeName): CSSProperties {
   return Object.fromEntries(
