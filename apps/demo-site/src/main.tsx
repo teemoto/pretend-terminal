@@ -18,6 +18,7 @@ import {
   defaultSandboxSettings,
   type SandboxSettings,
 } from './sandbox.js';
+import { createThemeCardStyle, themeGalleryItems } from './theme-gallery.js';
 import './style.css';
 
 const appearanceOptions = [
@@ -55,6 +56,19 @@ function App() {
     '--pt-accent': sandbox.accent,
     '--pt-border': sandbox.border,
   } as CSSProperties;
+
+  const selectGalleryTheme = (theme: BuiltInThemeName) => {
+    setSandbox((current) => applyBuiltInTheme(current, theme));
+  };
+
+  const moveGalleryFocus = (theme: BuiltInThemeName, direction: -1 | 1) => {
+    const currentIndex = themeGalleryItems.findIndex((item) => item.name === theme);
+    const nextIndex =
+      (currentIndex + direction + themeGalleryItems.length) % themeGalleryItems.length;
+    const nextTheme = themeGalleryItems[nextIndex].name;
+    selectGalleryTheme(nextTheme);
+    document.querySelector<HTMLButtonElement>(`#theme-card-${nextTheme}`)?.focus();
+  };
 
   return (
     <div className="site-shell">
@@ -286,6 +300,75 @@ function App() {
                 Try <code>showcase</code>. Built-in commands appear only when enabled above.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="theme-gallery-section" id="themes" aria-labelledby="themes-title">
+          <div className="section-heading">
+            <p className="eyebrow">Bundled themes</p>
+            <h2 id="themes-title">Nine palettes. One consistent terminal.</h2>
+            <p>
+              Select a theme to apply it to the sandbox. Every card uses a representative
+              transcript, so you can assess text, muted output, links, and status colors together.
+            </p>
+          </div>
+          <div className="theme-gallery" role="radiogroup" aria-label="Bundled terminal themes">
+            {themeGalleryItems.map((item) => {
+              const selected = sandbox.theme === item.name;
+              return (
+                <button
+                  id={`theme-card-${item.name}`}
+                  key={item.name}
+                  type="button"
+                  className={selected ? 'theme-card is-selected' : 'theme-card'}
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={`${item.label} theme${selected ? ', selected' : ''}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => selectGalleryTheme(item.name)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                      event.preventDefault();
+                      moveGalleryFocus(item.name, 1);
+                    }
+                    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                      event.preventDefault();
+                      moveGalleryFocus(item.name, -1);
+                    }
+                    if (event.key === 'Home') {
+                      event.preventDefault();
+                      const firstTheme = themeGalleryItems[0].name;
+                      selectGalleryTheme(firstTheme);
+                      document.querySelector<HTMLButtonElement>('#theme-card-default')?.focus();
+                    }
+                    if (event.key === 'End') {
+                      event.preventDefault();
+                      const lastTheme = themeGalleryItems.at(-1)?.name;
+                      if (lastTheme) {
+                        selectGalleryTheme(lastTheme);
+                        document
+                          .querySelector<HTMLButtonElement>(`#theme-card-${lastTheme}`)
+                          ?.focus();
+                      }
+                    }
+                  }}
+                >
+                  <span className="theme-card-name">
+                    {item.label}
+                    {selected ? <span className="theme-card-selected">Selected</span> : null}
+                  </span>
+                  <span className="theme-card-terminal" style={createThemeCardStyle(item.name)}>
+                    <span>
+                      <strong>teemo</strong>@site:~ $ showcase
+                    </span>
+                    <span className="theme-card-muted">Structured and configurable.</span>
+                    <span className="theme-card-success">✓ Safe browser simulation</span>
+                    <span className="theme-card-error">Controlled error output</span>
+                    <span className="theme-card-link">Read the docs ↗</span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </section>
       </main>
