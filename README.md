@@ -14,6 +14,10 @@ Pretend Terminal includes a framework-independent core package and a first-class
 
 Explore the interactive configuration sandbox, nine-theme gallery, and integration snippets at [teemoto.github.io/pretend-terminal](https://teemoto.github.io/pretend-terminal/).
 
+## Using Pretend Terminal with coding agents
+
+For a short, copy-pasteable path that agents and developers can follow, use the [integration guide](docs/INTEGRATION_GUIDE.md). The repository root also provides [llms.txt](llms.txt), a concise map to the guide, reference documentation, examples, and the live demo.
+
 ## Why Pretend Terminal?
 
 - **Safe by design.** Commands are application-defined; they never execute a system shell.

@@ -1,0 +1,26 @@
+# Pretend Terminal
+
+> A safe, configurable browser pseudo-terminal for vanilla JavaScript and React. It renders application-defined structured output; it never executes shell commands, reads a host filesystem, or makes package-owned network requests.
+
+Use the published `0.2.0` packages: `@pretend-terminal/core` for vanilla JavaScript and `@pretend-terminal/react` for React. Import the matching package stylesheet. Static commands and responses can live in JSON; dynamic behavior belongs in explicit application-owned JavaScript or TypeScript handlers.
+
+## Start here
+
+- [Integration guide](https://github.com/teemoto/pretend-terminal/blob/main/docs/INTEGRATION_GUIDE.md): copy-paste vanilla and React setup, JSON configuration, theming, persistence, and an agent implementation checklist.
+- [Repository README](https://github.com/teemoto/pretend-terminal#readme): complete v1 API, output types, keyboard behavior, accessibility, and security model.
+- [Live demo](https://teemoto.github.io/pretend-terminal/): interactive sandbox and generated integration snippets.
+
+## Reference
+
+- [Core package](https://www.npmjs.com/package/@pretend-terminal/core)
+- [React package](https://www.npmjs.com/package/@pretend-terminal/react)
+- [Vanilla example](https://github.com/teemoto/pretend-terminal/tree/main/examples/vanilla)
+- [React example](https://github.com/teemoto/pretend-terminal/tree/main/examples/react)
+
+## Important constraints
+
+- Import `@pretend-terminal/core/styles.css` with the core API, or `@pretend-terminal/react/styles.css` with React.
+- Use structured output blocks (`text`, `lines`, status variants, `table`, `link`, or `ascii`); raw HTML and Markdown are outside v1.
+- Keep handlers deliberate and application-owned. They may call an application API, but their authorization, privacy, and error handling are the application's responsibility.
+- In React, treat command, theme, and persistence props as initialization-time values. Use the core API for runtime reconfiguration.
+- Browser persistence is opt-in and needs a unique consumer-owned `storage.key`.

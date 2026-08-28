@@ -27,7 +27,7 @@ describe('PretendTerminal', () => {
     });
   });
 
-  it('type-checks the README React usage snippet', () => {
+  it('type-checks the README and integration-guide React usage snippets', () => {
     const props = {
       prompt: 'visitor@site:~ $',
       theme: 'matrix',
@@ -40,8 +40,23 @@ describe('PretendTerminal', () => {
       ],
     } satisfies PretendTerminalProps;
     const snippet = <PretendTerminal {...props} />;
+    const integrationGuideProps = {
+      ariaLabel: 'About this site',
+      prompt: 'teemo@site:~ $',
+      height: '26rem',
+      theme: 'nord',
+      commands: [
+        {
+          name: 'about',
+          description: 'Learn about this site',
+          response: { type: 'text', value: 'Built with Pretend Terminal.' },
+        },
+      ],
+    } satisfies PretendTerminalProps;
+    const integrationGuideSnippet = <PretendTerminal {...integrationGuideProps} />;
 
     expect(snippet.type).toBe(PretendTerminal);
+    expect(integrationGuideSnippet.type).toBe(PretendTerminal);
   });
 
   it('renders a labelled real input and retains typed input through the shared engine', async () => {

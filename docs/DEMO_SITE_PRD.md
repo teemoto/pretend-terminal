@@ -48,13 +48,14 @@ They want a quick visual reference for themes, keyboard behavior, output primiti
 
 The site is a responsive single page with anchored navigation. The intended reading order is:
 
-1. **Hero and live terminal** — concise value proposition, install/source links, and a working terminal with `help`, `about`, `themes`, `install`, and `examples` commands.
+1. **Hero and live terminal** — concise value proposition, install/source links, and a working terminal with `help`, `about`, `themes`, `install`, `examples`, and `agents` commands.
 2. **Why Pretend Terminal** — safe simulation, configuration-first setup, framework-neutral core, and accessible interaction.
 3. **Configuration sandbox** — controls beside a live preview.
 4. **Theme gallery** — all nine themes, with an immediately visible preview and a way to select one for the sandbox.
 5. **Generated snippets** — Vanilla JavaScript, React, JSON, and CSS-variable tabs that follow the sandbox’s supported settings.
-6. **Feature demonstrations** — concise examples of history navigation, Tab completion, async output, error output, and keyboard accessibility.
-7. **Footer** — npm, GitHub, README/API documentation, changelog, issue reporting, and contribution links.
+6. **Agent guidance** — a visible integration-guide link and `llms.txt` link for coding agents and developers who want a concise, safe implementation path.
+7. **Feature demonstrations** — concise examples of history navigation, Tab completion, async output, error output, and keyboard accessibility.
+8. **Footer** — npm, GitHub, README/API documentation, changelog, issue reporting, and contribution links.
 
 Each section must work independently when linked through an anchor and retain understandable context on narrow screens.
 
@@ -85,6 +86,7 @@ The site should feel terminal-native but refined: strong typography, calm layout
 - Use Teemo as the illustrative identity and approachable, explanatory command responses.
 - Provide discoverable commands through `help`; no visitor needs prior terminal knowledge.
 - Include links to npm and GitHub in both the surrounding UI and terminal output where useful.
+- Link the agent-friendly integration guide from both the onboarding terminal and a visible page section; surface `llms.txt` as the concise discovery map.
 - Make the safety boundary clear: the terminal only runs configuration supplied by the site.
 
 ### 7.2 Configuration sandbox

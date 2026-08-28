@@ -46,5 +46,15 @@ export const onboardingTerminalConfig = {
         openInNewTab: true,
       },
     },
+    {
+      name: 'agents',
+      description: 'Get the agent-friendly integration guide.',
+      response: {
+        type: 'link',
+        label: 'Read the Pretend Terminal integration guide on GitHub',
+        href: 'https://github.com/teemoto/pretend-terminal/blob/main/docs/INTEGRATION_GUIDE.md',
+        openInNewTab: true,
+      },
+    },
   ],
 } satisfies TerminalConfig;

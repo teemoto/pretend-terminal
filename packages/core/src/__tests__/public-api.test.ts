@@ -25,11 +25,26 @@ describe('the public core type contract', () => {
     });
   });
 
-  it('type-checks the README vanilla, JSON, and dynamic-command configurations', () => {
+  it('type-checks the README and integration-guide vanilla, JSON, and dynamic-command configurations', () => {
     const vanillaConfig = {
       prompt: 'visitor@site:~ $',
       height: '28rem',
       theme: 'dracula',
+      commands: [
+        {
+          name: 'about',
+          description: 'Learn about this site',
+          response: {
+            type: 'lines',
+            lines: ['Built with Pretend Terminal.', 'Safe and browser-only.'],
+          },
+        },
+      ],
+    } satisfies TerminalDomConfig;
+    const integrationGuideConfig = {
+      prompt: 'teemo@site:~ $',
+      height: '26rem',
+      theme: 'nord',
       commands: [
         {
           name: 'about',
@@ -72,6 +87,7 @@ describe('the public core type contract', () => {
     } satisfies Command;
 
     expect(vanillaConfig.commands[0]?.name).toBe('about');
+    expect(integrationGuideConfig.height).toBe('26rem');
     expect(jsonCompatibleConfig.commands[0]?.aliases).toEqual(['email']);
     expect(dynamicCommand.name).toBe('status');
   });

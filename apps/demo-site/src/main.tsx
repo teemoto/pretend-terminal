@@ -101,6 +101,7 @@ function App() {
           <a href="#try-it">Try it</a>
           <a href="#learn">How it works</a>
           <a href="#sandbox">Sandbox</a>
+          <a href="#agents">For agents</a>
           <a href="https://github.com/teemoto/pretend-terminal" target="_blank" rel="noreferrer">
             GitHub
           </a>
@@ -183,6 +184,9 @@ function App() {
                 </li>
                 <li>
                   <code>install</code>
+                </li>
+                <li>
+                  <code>agents</code>
                 </li>
               </ul>
               <p>
@@ -444,6 +448,44 @@ function App() {
                 {copyFeedback}
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="agent-guidance-section" id="agents" aria-labelledby="agents-title">
+          <div className="section-heading">
+            <p className="eyebrow">For people and coding agents</p>
+            <h2 id="agents-title">Give your implementation a reliable starting point.</h2>
+            <p>
+              The guide covers the correct renderer, stylesheet, JSON-friendly configuration, and
+              browser-only safety boundary. The concise <code>llms.txt</code> file helps an agent
+              find that guidance and the full reference quickly.
+            </p>
+          </div>
+          <div className="agent-guidance-links">
+            <a
+              className="agent-guidance-card"
+              href="https://github.com/teemoto/pretend-terminal/blob/main/docs/INTEGRATION_GUIDE.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="guide-label">Start here</span>
+              <strong>Integration guide ↗</strong>
+              <span>
+                Copy-paste React and vanilla setup, styling, persistence, and safety notes.
+              </span>
+            </a>
+            <a
+              className="agent-guidance-card"
+              href="https://github.com/teemoto/pretend-terminal/blob/main/llms.txt"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span className="guide-label">Quick map</span>
+              <strong>llms.txt ↗</strong>
+              <span>
+                Compact links to the guide, API reference, examples, npm packages, and demo.
+              </span>
+            </a>
           </div>
         </section>
 

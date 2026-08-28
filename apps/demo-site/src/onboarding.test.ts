@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { onboardingTerminalConfig } from './onboarding.js';
 
 describe('demo onboarding terminal', () => {
-  it('lets a visitor discover the product, themes, installation, and documentation through help', async () => {
+  it('lets a visitor discover the product, themes, installation, documentation, and agent guidance through help', async () => {
     const engine = createTerminalEngine(onboardingTerminalConfig);
 
     await engine.run('help');
@@ -18,6 +18,7 @@ describe('demo onboarding terminal', () => {
           ['themes', 'See the bundled theme names.'],
           ['install', 'Show the package installation command.'],
           ['examples', 'Open the documentation and examples.'],
+          ['agents', 'Get the agent-friendly integration guide.'],
         ]),
       }),
     });

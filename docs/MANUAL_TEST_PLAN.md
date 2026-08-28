@@ -49,18 +49,19 @@ Both examples should run without browser-console errors. Commands must only prod
 1. From the repository root, run `corepack pnpm dev:demo` and open `http://localhost:5173/pretend-terminal/`.
 2. Use only the keyboard to Tab through the header links and appearance icon buttons. Confirm each icon exposes a tooltip and clear accessible name on focus.
 3. Choose Dark and Light, refresh after each, and confirm the selected site appearance persists. Choose System and confirm the site follows the operating-system preference instead. Confirm the terminal theme itself does not change with the site appearance.
-4. In the Teemo onboarding terminal, run `help`, `about`, `themes`, `install`, and `examples`. Confirm the safety boundary appears in both visible page copy and the `about` response.
+4. In the Teemo onboarding terminal, run `help`, `about`, `themes`, `install`, `examples`, and `agents`. Confirm the safety boundary appears in both visible page copy and the `about` response, and that `agents` opens the integration guide in a new tab.
 5. In the sandbox, change the prompt, choose several presets, change each color input, and toggle built-ins. Confirm the preview updates without a page reload and the `showcase` command still renders text, lines, statuses, a table, a link, and ASCII output.
 6. Enable history persistence, enter `showcase`, refresh, and press Arrow Up in the preview. Confirm history restores. Disable it and confirm it no longer reads or writes the demo history key.
 7. Select every theme card. Confirm each selected card shows text in addition to its visual selected state and updates the sandbox preset and editable colors. Use Arrow keys, Home, and End in the gallery to repeat the check without a mouse.
 8. Inspect all nine cards for readable prompt, normal text, muted text, link, success, and error treatments. Repeat in both site appearance modes; the component palette should remain legible independently of surrounding chrome.
 9. Change sandbox values and check Vanilla JS, React, JSON config, and CSS token snippets. Confirm the snippets change with the supported configuration, package names and stylesheet imports are correct, and JSON describes static configuration only.
 10. Use the Copy snippet button. Confirm the status message announces success; if browser clipboard permission is unavailable, confirm it explains the manual-copy fallback.
-11. In the Interaction features terminal, run `status` and observe `Running…` before its success output. Run `mishap` and confirm the generic friendly error does not include the demo’s internal failure detail.
-12. Verify Arrow Up/Down, Tab completion, Ctrl/Cmd + L, click-to-focus, and the keyboard-guide descriptions in the Interaction features section.
-13. Test at a narrow width of approximately 320px and a normal desktop width. Confirm no horizontal page scrolling, controls remain reachable, and terminals remain usable.
-14. Enable `prefers-reduced-motion` in browser development tools or the operating system. Confirm the page does not rely on animation and transitions are effectively suppressed.
-15. Confirm browser developer tools show no console errors or unsafe inline evaluation warnings during the preceding checks.
-16. Run `corepack pnpm build`. Check `apps/demo-site/dist` contains static assets only and that its JavaScript contains no `workspace:` dependency references.
+11. In the For people and coding agents section, open both cards. Confirm the integration guide and `llms.txt` open on GitHub in a new tab and the card copy makes their distinct purposes clear.
+12. In the Interaction features terminal, run `status` and observe `Running…` before its success output. Run `mishap` and confirm the generic friendly error does not include the demo’s internal failure detail.
+13. Verify Arrow Up/Down, Tab completion, Ctrl/Cmd + L, click-to-focus, and the keyboard-guide descriptions in the Interaction features section.
+14. Test at a narrow width of approximately 320px and a normal desktop width. Confirm no horizontal page scrolling, controls remain reachable, and terminals remain usable.
+15. Enable `prefers-reduced-motion` in browser development tools or the operating system. Confirm the page does not rely on animation and transitions are effectively suppressed.
+16. Confirm browser developer tools show no console errors or unsafe inline evaluation warnings during the preceding checks.
+17. Run `corepack pnpm build`. Check `apps/demo-site/dist` contains static assets only and that its JavaScript contains no `workspace:` dependency references.
 
 **Demo pass criteria:** The page is usable by keyboard at desktop and narrow widths, all visible commands are configured or built in, appearance and terminal themes remain independent, copied examples remain accurate, and production assets resolve under `/pretend-terminal/`.
