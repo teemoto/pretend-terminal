@@ -1,5 +1,16 @@
 # @pretend-terminal/react
 
+## 0.2.0
+
+### Minor Changes
+
+- 0828012: Add Nord, Tokyo Night, Solarized Light, and GitHub Light bundled themes.
+
+### Patch Changes
+
+- Updated dependencies [0828012]
+  - @pretend-terminal/core@0.2.0
+
 ## 0.1.1
 
 ### Patch Changes
