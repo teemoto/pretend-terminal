@@ -20,6 +20,7 @@ import {
 } from './sandbox.js';
 import { createThemeCardStyle, themeGalleryItems } from './theme-gallery.js';
 import { createSnippet, snippetTabLabels, snippetTabs, type SnippetTab } from './snippets.js';
+import { createFeatureDemoConfig } from './feature-demo.js';
 import './style.css';
 
 const appearanceOptions = [
@@ -74,6 +75,7 @@ function App() {
   };
 
   const activeSnippetValue = createSnippet(activeSnippet, sandbox);
+  const featureDemoConfig = createFeatureDemoConfig();
 
   const copyActiveSnippet = async () => {
     if (!navigator.clipboard) {
@@ -440,6 +442,58 @@ function App() {
               </button>
               <p className="copy-feedback" role="status" aria-live="polite">
                 {copyFeedback}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="features-section" id="features" aria-labelledby="features-title">
+          <div className="section-heading">
+            <p className="eyebrow">Interaction features</p>
+            <h2 id="features-title">Familiar terminal controls, clearly explained.</h2>
+            <p>
+              Pretend Terminal keeps a real text input and predictable keyboard behavior, while the
+              commands themselves stay under the site owner's control.
+            </p>
+          </div>
+          <div className="features-layout">
+            <div className="keyboard-guide" aria-labelledby="keyboard-guide-title">
+              <h3 id="keyboard-guide-title">Keyboard guide</h3>
+              <dl>
+                <div>
+                  <dt>
+                    <kbd>↑</kbd> <kbd>↓</kbd>
+                  </dt>
+                  <dd>Move through submitted command history.</dd>
+                </div>
+                <div>
+                  <dt>
+                    <kbd>Tab</kbd>
+                  </dt>
+                  <dd>Complete a configured command or show matching choices.</dd>
+                </div>
+                <div>
+                  <dt>
+                    <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>L</kbd>
+                  </dt>
+                  <dd>Clear visible output while retaining command history.</dd>
+                </div>
+              </dl>
+              <p className="field-note">
+                Click a terminal’s empty space to focus its input. Output is announced politely to
+                assistive technology.
+              </p>
+            </div>
+            <div className="feature-terminal-demo">
+              <p className="guide-label">Try live behavior</p>
+              <PretendTerminal
+                {...featureDemoConfig}
+                ariaLabel="Pretend Terminal interaction feature demonstration"
+              />
+              <p className="field-note">
+                Run <code>status</code> to see the pending state and a safe async result. Run{' '}
+                <code>mishap</code> to see the friendly error output; internal details are not
+                shown.
               </p>
             </div>
           </div>

@@ -57,7 +57,6 @@ export function applyBuiltInTheme(
 export function createPortableSandboxConfig(settings: SandboxSettings): TerminalConfig {
   return {
     prompt: normalizePrompt(settings.prompt),
-    height: '25rem',
     theme: settings.theme,
     includeBuiltIns: settings.includeBuiltIns,
     storage: settings.persistHistory

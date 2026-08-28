@@ -121,7 +121,8 @@ code,
 .value-section,
 .sandbox-section,
 .theme-gallery-section,
-.snippets-section {
+.snippets-section,
+.features-section {
   padding: 6.5rem 0;
 }
 
@@ -300,7 +301,8 @@ h3 {
 .value-section,
 .sandbox-section,
 .theme-gallery-section,
-.snippets-section {
+.snippets-section,
+.features-section {
   border-top: 1px solid var(--site-border);
 }
 
@@ -604,6 +606,75 @@ h3 {
   margin: 0;
 }
 
+.features-layout {
+  align-items: start;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(15rem, 0.6fr) minmax(0, 1fr);
+  margin-top: 2.5rem;
+}
+
+.keyboard-guide {
+  background: var(--site-panel);
+  border: 1px solid var(--site-border);
+  border-radius: 0.65rem;
+  padding: 1.25rem;
+}
+
+.keyboard-guide dl {
+  display: grid;
+  gap: 1rem;
+  margin: 0 0 1.25rem;
+}
+
+.keyboard-guide dl div {
+  border-bottom: 1px solid var(--site-border);
+  padding-bottom: 1rem;
+}
+
+.keyboard-guide dl div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.keyboard-guide dt {
+  color: var(--site-text);
+  margin-bottom: 0.45rem;
+}
+
+.keyboard-guide dd {
+  color: var(--site-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+kbd {
+  background: var(--site-background);
+  border: 1px solid var(--site-border-strong);
+  border-bottom-width: 2px;
+  border-radius: 0.25rem;
+  color: var(--site-text);
+  font:
+    700 0.72rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace;
+  padding: 0.25rem 0.35rem;
+}
+
+.feature-terminal-demo .guide-label {
+  margin-bottom: 0.75rem;
+}
+
+.feature-terminal-demo .field-note {
+  margin-top: 0.75rem;
+}
+
 .value-grid article {
   background: var(--site-panel);
   border: 1px solid var(--site-border);
@@ -655,13 +726,15 @@ h3 {
   .value-section,
   .sandbox-section,
   .theme-gallery-section,
-  .snippets-section {
+  .snippets-section,
+  .features-section {
     padding: 4.5rem 0;
   }
 
   .terminal-layout,
   .value-grid,
-  .sandbox-layout {
+  .sandbox-layout,
+  .features-layout {
     grid-template-columns: 1fr;
   }
 
