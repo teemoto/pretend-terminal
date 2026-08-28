@@ -12,6 +12,7 @@
     "build": "corepack pnpm --recursive --if-present run build",
     "changeset": "changeset",
     "clean": "corepack pnpm --recursive --if-present run clean",
+    "dev:demo": "corepack pnpm --filter @pretend-terminal/demo-site dev",
     "dev:react": "corepack pnpm --filter @pretend-terminal/example-react dev",
     "dev:vanilla": "corepack pnpm --filter @pretend-terminal/example-vanilla dev",
     "format": "prettier --write .",

@@ -1,0 +1,17 @@
+:root {
+  color: #e6edf3;
+  background: #0d1117;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: 4rem 1.5rem;
+}

@@ -1,9 +1,14 @@
 packages:
+  - apps/*
   - packages/*
   - examples/*
 
 allowBuilds:
   esbuild: true
+
+minimumReleaseAgeExclude:
+  - '@pretend-terminal/core@0.2.0'
+  - '@pretend-terminal/react@0.2.0'
 
 # Corepack is the pinned pnpm entry point; do not invoke an ambient package-manager shim.
 verifyDepsBeforeRun: false

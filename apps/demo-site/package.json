@@ -1,0 +1,19 @@
+{
+  "name": "@pretend-terminal/demo-site",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pretend-terminal/core": "0.2.0",
+    "@pretend-terminal/react": "0.2.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.8"
+  }
+}

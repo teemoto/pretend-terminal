@@ -59,6 +59,21 @@ importers:
         specifier: ^4.0.16
         version: 4.1.11(@types/node@24.13.3)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.27.7))
 
+  apps/demo-site:
+    dependencies:
+      '@pretend-terminal/core':
+        specifier: 0.2.0
+        version: 0.2.0
+      '@pretend-terminal/react':
+        specifier: 0.2.0
+        version: 0.2.0(react@19.2.8)
+      react:
+        specifier: ^19.2.1
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
+
   examples/react:
     dependencies:
       '@pretend-terminal/core':
@@ -717,6 +732,22 @@ packages:
       {
         integrity: sha512-XC0QsnnhVe7sLIWmYmdPw7x5P0h4W8vUU3Nv1ySgWXtvCz8NizoAEpGXA0sOYoJQV2Rl13LgURAHQ5cI5ILCSA==,
       }
+
+  '@pretend-terminal/core@0.2.0':
+    resolution:
+      {
+        integrity: sha512-BfQhJGYplkvD60k3D9OwFsSvZGBw7+AuV91Yuz8FY2/PIJSSEreUKn6Ybr/ii9v09WrR4hn0J348LW4jrsziCg==,
+      }
+    engines: { node: '>=22.13.0' }
+
+  '@pretend-terminal/react@0.2.0':
+    resolution:
+      {
+        integrity: sha512-lu6veT/fdpUJi/3OA9bxr57JV2YJNOg6h39dsInctV3SiLNFAtIyh5+aV6Hw2zBraHYvTdItCBpV9P8Eq+x4lg==,
+      }
+    engines: { node: '>=22.13.0' }
+    peerDependencies:
+      react: '>=18.0.0'
 
   '@rolldown/binding-android-arm-eabi@1.2.5':
     resolution:
@@ -3531,6 +3562,13 @@ snapshots:
       fastq: 1.20.1
 
   '@oxc-project/types@0.146.0': {}
+
+  '@pretend-terminal/core@0.2.0': {}
+
+  '@pretend-terminal/react@0.2.0(react@19.2.8)':
+    dependencies:
+      '@pretend-terminal/core': 0.2.0
+      react: 19.2.8
 
   '@rolldown/binding-android-arm-eabi@1.2.5':
     optional: true
