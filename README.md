@@ -8,7 +8,11 @@ Pretend Terminal lets people add a terminal-inspired interface to a website with
 
 Pretend Terminal includes a framework-independent core package and a first-class React integration.
 
-> **Project status:** pre-release. The v1 API and examples are implemented in this repository; the packages have not been published yet.
+> **Project status:** `@pretend-terminal/core` and `@pretend-terminal/react` are published at `0.2.0`.
+
+## Live demo
+
+Explore the interactive configuration sandbox, nine-theme gallery, and integration snippets at [teemoto.github.io/pretend-terminal](https://teemoto.github.io/pretend-terminal/).
 
 ## Why Pretend Terminal?
 
@@ -38,11 +42,11 @@ For local visual testing, the repository includes vanilla and React Vite example
 
 Published release notes live in [CHANGELOG.md](CHANGELOG.md). This monorepo uses [Changesets](https://github.com/changesets/changesets): consumer-visible package changes receive a Changeset, `corepack pnpm version-packages` applies the approved version bumps and generates package-specific changelogs, and `corepack pnpm release` publishes only after the repository owner explicitly approves it. Publishing is never part of CI.
 
-## Install after the first release
+## Install
 
 Pretend Terminal requires Node.js `>=22.13.0` for installation and build tooling. The React package supports React `>=18.0.0`.
 
-Once `0.1.0` is published, install the package for your integration:
+Install the package for your integration:
 
 ```sh
 # Vanilla JavaScript
@@ -426,7 +430,7 @@ The immediate goal is a polished, documented v1. Advanced possibilities—such a
 
 ## Contributing
 
-Contributions and issue reports will be welcome once the initial package structure is in place. Until then, the most useful feedback is on the v1 requirements and API design in [docs/PRD.md](docs/PRD.md).
+Contributions and issue reports are welcome. Start with the [v1 requirements](docs/PRD.md) and open an issue if you would like to discuss a larger change first.
 
 ## License
 
