@@ -96,11 +96,19 @@ code,
 }
 
 .wordmark {
+  align-items: center;
   color: var(--site-text);
+  display: inline-flex;
   font-size: 0.925rem;
   font-weight: 700;
+  gap: 0.5rem;
   letter-spacing: -0.04em;
   text-decoration: none;
+}
+
+.wordmark img {
+  height: 1.35rem;
+  width: 1.35rem;
 }
 
 .site-header nav {

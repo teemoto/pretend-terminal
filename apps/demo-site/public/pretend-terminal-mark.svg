@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title description">
+  <title id="title">Pretend Terminal</title>
+  <desc id="description">A terminal window with a command prompt and a dashed placeholder cursor.</desc>
+  <rect width="64" height="64" rx="14" fill="#10172a"/>
+  <rect x="7" y="11" width="50" height="42" rx="7" fill="#1f2937" stroke="#7aa2f7" stroke-width="3"/>
+  <path d="M8.5 24h47" stroke="#7aa2f7" stroke-width="3"/>
+  <circle cx="15" cy="17.5" r="2" fill="#bb9af7"/>
+  <circle cx="22" cy="17.5" r="2" fill="#7dcfff"/>
+  <path d="m18 32 7 6-7 6" fill="none" stroke="#e7ecf7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <path d="M31 44h7" stroke="#e7ecf7" stroke-linecap="round" stroke-width="3"/>
+  <rect x="41.5" y="31.5" width="8" height="13" rx="1.5" fill="none" stroke="#bb9af7" stroke-dasharray="2.5 2.5" stroke-width="2"/>
+</svg>

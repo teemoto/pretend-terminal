@@ -95,7 +95,8 @@ function App() {
     <div className="site-shell">
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="Pretend Terminal home">
-          pretend-terminal
+          <img src="/pretend-terminal/pretend-terminal-mark.svg" alt="" />
+          <span>pretend-terminal</span>
         </a>
         <nav aria-label="Main navigation">
           <a href="#try-it">Try it</a>

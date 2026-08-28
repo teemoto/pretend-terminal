@@ -63,6 +63,12 @@ Each section must work independently when linked through an anchor and retain un
 
 The site should feel terminal-native but refined: strong typography, calm layout, considered spacing, and restrained motion. It must not make the entire product look like a retro hacker simulation; the terminal components and theme gallery provide that character where appropriate.
 
+### Brand mark and favicon
+
+- Use a compact SVG brand mark centered on a terminal window.
+- Signal the product's simulated nature with a visibly dashed placeholder cursor rather than an executable-looking command affordance alone.
+- Use the same mark in the demo header and as the SVG favicon so the visual identity remains legible at small sizes.
+
 ### Site appearance switcher
 
 - Provide `System`, `Dark`, and `Light` appearance modes for the site chrome.
