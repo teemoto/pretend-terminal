@@ -6,9 +6,15 @@ import {
   createSandboxTerminalConfig,
   defaultSandboxSettings,
   normalizePrompt,
+  SANDBOX_STORAGE_KEY,
 } from './sandbox.js';
+import { SITE_APPEARANCE_STORAGE_KEY } from './appearance.js';
 
 describe('configuration sandbox', () => {
+  it('keeps sandbox history separate from the site appearance preference', () => {
+    expect(SANDBOX_STORAGE_KEY).not.toBe(SITE_APPEARANCE_STORAGE_KEY);
+  });
+
   it('uses a safe default prompt when a visitor clears the prompt field', () => {
     expect(normalizePrompt('   ')).toBe(defaultSandboxSettings.prompt);
     expect(normalizePrompt('teemo\n$ ')).toBe('teemo $');
