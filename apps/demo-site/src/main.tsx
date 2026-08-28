@@ -1,6 +1,7 @@
+import type { BuiltInThemeName } from '@pretend-terminal/core';
 import { PretendTerminal } from '@pretend-terminal/react';
 import { createRoot } from 'react-dom/client';
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 
 import '@pretend-terminal/react/styles.css';
 import {
@@ -11,6 +12,12 @@ import {
   writeSiteAppearance,
 } from './appearance.js';
 import { onboardingTerminalConfig } from './onboarding.js';
+import {
+  applyBuiltInTheme,
+  createSandboxTerminalConfig,
+  defaultSandboxSettings,
+  type SandboxSettings,
+} from './sandbox.js';
 import './style.css';
 
 const appearanceOptions = [
@@ -21,6 +28,7 @@ const appearanceOptions = [
 
 function App() {
   const [appearance, setAppearance] = useState<SiteAppearance>(readSiteAppearance);
+  const [sandbox, setSandbox] = useState<SandboxSettings>(defaultSandboxSettings);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -40,6 +48,14 @@ function App() {
     writeSiteAppearance(nextAppearance);
   };
 
+  const sandboxConfig = createSandboxTerminalConfig(sandbox);
+  const sandboxStyle = {
+    '--pt-background': sandbox.background,
+    '--pt-text': sandbox.text,
+    '--pt-accent': sandbox.accent,
+    '--pt-border': sandbox.border,
+  } as CSSProperties;
+
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -49,6 +65,7 @@ function App() {
         <nav aria-label="Main navigation">
           <a href="#try-it">Try it</a>
           <a href="#learn">How it works</a>
+          <a href="#sandbox">Sandbox</a>
           <a href="https://github.com/teemoto/pretend-terminal" target="_blank" rel="noreferrer">
             GitHub
           </a>
@@ -161,6 +178,114 @@ function App() {
               <h3>Easy to style</h3>
               <p>Start from a bundled theme or override public CSS tokens for your own brand.</p>
             </article>
+          </div>
+        </section>
+
+        <section className="sandbox-section" id="sandbox" aria-labelledby="sandbox-title">
+          <div className="section-heading">
+            <p className="eyebrow">Configuration sandbox</p>
+            <h2 id="sandbox-title">Tune the terminal without writing code.</h2>
+            <p>
+              These controls represent a small, safe subset of the public configuration API. Your
+              changes stay in this browser tab and never evaluate as JavaScript or HTML.
+            </p>
+          </div>
+          <div className="sandbox-layout">
+            <form className="sandbox-controls" onSubmit={(event) => event.preventDefault()}>
+              <label>
+                Prompt
+                <input
+                  type="text"
+                  value={sandbox.prompt}
+                  maxLength={60}
+                  onChange={(event) =>
+                    setSandbox((current) => ({
+                      ...current,
+                      prompt: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                Theme
+                <select
+                  value={sandbox.theme}
+                  onChange={(event) => {
+                    const theme = event.target.value as BuiltInThemeName;
+                    setSandbox((current) => applyBuiltInTheme(current, theme));
+                  }}
+                >
+                  <option value="default">Default</option>
+                  <option value="dracula">Dracula</option>
+                  <option value="matrix">Matrix</option>
+                  <option value="amber">Amber</option>
+                  <option value="light">Light</option>
+                  <option value="nord">Nord</option>
+                  <option value="tokyo-night">Tokyo Night</option>
+                  <option value="solarized-light">Solarized Light</option>
+                  <option value="github-light">GitHub Light</option>
+                </select>
+              </label>
+              <label className="checkbox-control">
+                <input
+                  type="checkbox"
+                  checked={sandbox.includeBuiltIns}
+                  onChange={(event) =>
+                    setSandbox((current) => ({ ...current, includeBuiltIns: event.target.checked }))
+                  }
+                />
+                <span className="built-in-command-list">
+                  Enable <code>help</code>, <code>clear</code>, and <code>history</code>
+                </span>
+              </label>
+              <label className="checkbox-control">
+                <input
+                  type="checkbox"
+                  checked={sandbox.persistHistory}
+                  onChange={(event) =>
+                    setSandbox((current) => ({ ...current, persistHistory: event.target.checked }))
+                  }
+                />
+                Remember command history on this device
+              </label>
+              <p className="field-note">
+                History uses the demo-only key <code>pretend-terminal-demo:sandbox-v1</code>.
+              </p>
+              <fieldset className="token-controls">
+                <legend>CSS token overrides</legend>
+                {(
+                  [
+                    ['background', 'Background'],
+                    ['text', 'Text'],
+                    ['accent', 'Accent'],
+                    ['border', 'Border'],
+                  ] as const
+                ).map(([token, label]) => (
+                  <label key={token}>
+                    {label}
+                    <input
+                      type="color"
+                      value={sandbox[token]}
+                      onChange={(event) =>
+                        setSandbox((current) => ({ ...current, [token]: event.target.value }))
+                      }
+                    />
+                  </label>
+                ))}
+              </fieldset>
+            </form>
+            <div className="sandbox-preview">
+              <p className="guide-label">Live preview</p>
+              <PretendTerminal
+                key={JSON.stringify(sandboxConfig)}
+                {...sandboxConfig}
+                style={sandboxStyle}
+                ariaLabel="Configurable Pretend Terminal sandbox preview"
+              />
+              <p className="field-note">
+                Try <code>showcase</code>. Built-in commands appear only when enabled above.
+              </p>
+            </div>
           </div>
         </section>
       </main>

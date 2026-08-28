@@ -118,7 +118,8 @@ code,
 
 .hero,
 .terminal-section,
-.value-section {
+.value-section,
+.sandbox-section {
   padding: 6.5rem 0;
 }
 
@@ -294,7 +295,8 @@ h3 {
 }
 
 .terminal-section,
-.value-section {
+.value-section,
+.sandbox-section {
   border-top: 1px solid var(--site-border);
 }
 
@@ -352,6 +354,99 @@ h3 {
   margin-top: 2.5rem;
 }
 
+.sandbox-layout {
+  align-items: start;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(16rem, 0.65fr) minmax(0, 1fr);
+  margin-top: 2.5rem;
+}
+
+.sandbox-controls {
+  background: var(--site-panel);
+  border: 1px solid var(--site-border);
+  border-radius: 0.65rem;
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.sandbox-controls > label,
+.token-controls label {
+  color: var(--site-text);
+  display: grid;
+  font-size: 0.85rem;
+  font-weight: 700;
+  gap: 0.45rem;
+}
+
+.sandbox-controls input[type='text'],
+.sandbox-controls select {
+  background: var(--site-background);
+  border: 1px solid var(--site-border-strong);
+  border-radius: 0.35rem;
+  color: var(--site-text);
+  font: inherit;
+  padding: 0.65rem;
+}
+
+.sandbox-controls input[type='color'] {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  height: 2.1rem;
+  padding: 0;
+  width: 100%;
+}
+
+.checkbox-control {
+  align-items: center;
+  grid-template-columns: auto 1fr;
+}
+
+.checkbox-control input {
+  accent-color: var(--site-accent);
+  height: 1rem;
+  margin: 0;
+  width: 1rem;
+}
+
+.built-in-command-list {
+  white-space: nowrap;
+}
+
+.field-note {
+  color: var(--site-subtle);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.field-note code {
+  color: var(--site-code);
+}
+
+.token-controls {
+  border: 1px solid var(--site-border);
+  border-radius: 0.4rem;
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 0;
+  padding: 0.9rem;
+}
+
+.token-controls legend {
+  color: var(--site-text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0 0.25rem;
+}
+
+.sandbox-preview .guide-label {
+  margin-bottom: 0.75rem;
+}
+
 .value-grid article {
   background: var(--site-panel);
   border: 1px solid var(--site-border);
@@ -400,12 +495,14 @@ h3 {
 
   .hero,
   .terminal-section,
-  .value-section {
+  .value-section,
+  .sandbox-section {
     padding: 4.5rem 0;
   }
 
   .terminal-layout,
-  .value-grid {
+  .value-grid,
+  .sandbox-layout {
     grid-template-columns: 1fr;
   }
 
