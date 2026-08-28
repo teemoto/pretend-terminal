@@ -19,6 +19,7 @@ import {
   type SandboxSettings,
 } from './sandbox.js';
 import { createThemeCardStyle, themeGalleryItems } from './theme-gallery.js';
+import { createSnippet, snippetTabLabels, snippetTabs, type SnippetTab } from './snippets.js';
 import './style.css';
 
 const appearanceOptions = [
@@ -30,6 +31,8 @@ const appearanceOptions = [
 function App() {
   const [appearance, setAppearance] = useState<SiteAppearance>(readSiteAppearance);
   const [sandbox, setSandbox] = useState<SandboxSettings>(defaultSandboxSettings);
+  const [activeSnippet, setActiveSnippet] = useState<SnippetTab>('react');
+  const [copyFeedback, setCopyFeedback] = useState('');
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -68,6 +71,22 @@ function App() {
     const nextTheme = themeGalleryItems[nextIndex].name;
     selectGalleryTheme(nextTheme);
     document.querySelector<HTMLButtonElement>(`#theme-card-${nextTheme}`)?.focus();
+  };
+
+  const activeSnippetValue = createSnippet(activeSnippet, sandbox);
+
+  const copyActiveSnippet = async () => {
+    if (!navigator.clipboard) {
+      setCopyFeedback('Copy is unavailable in this browser.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(activeSnippetValue);
+      setCopyFeedback(`${snippetTabLabels[activeSnippet]} snippet copied.`);
+    } catch {
+      setCopyFeedback('Could not copy the snippet. Select and copy it manually.');
+    }
   };
 
   return (
@@ -369,6 +388,60 @@ function App() {
                 </button>
               );
             })}
+          </div>
+        </section>
+
+        <section className="snippets-section" id="snippets" aria-labelledby="snippets-title">
+          <div className="section-heading">
+            <p className="eyebrow">Integration snippets</p>
+            <h2 id="snippets-title">Take your configuration with you.</h2>
+            <p>
+              These snippets reflect the supported sandbox settings. JSON can express static
+              commands and structured output, but not dynamic JavaScript handlers.
+            </p>
+          </div>
+          <div className="snippet-panel">
+            <div className="snippet-tabs" role="tablist" aria-label="Integration snippet format">
+              {snippetTabs.map((tab) => (
+                <button
+                  id={`snippet-tab-${tab}`}
+                  key={tab}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeSnippet === tab}
+                  aria-controls={`snippet-panel-${tab}`}
+                  className={activeSnippet === tab ? 'is-selected' : undefined}
+                  onClick={() => {
+                    setActiveSnippet(tab);
+                    setCopyFeedback('');
+                  }}
+                >
+                  {snippetTabLabels[tab]}
+                </button>
+              ))}
+            </div>
+            <div
+              id={`snippet-panel-${activeSnippet}`}
+              role="tabpanel"
+              aria-labelledby={`snippet-tab-${activeSnippet}`}
+              tabIndex={0}
+            >
+              <pre className="snippet-code">
+                <code>{activeSnippetValue}</code>
+              </pre>
+            </div>
+            <div className="snippet-actions">
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={() => void copyActiveSnippet()}
+              >
+                Copy snippet
+              </button>
+              <p className="copy-feedback" role="status" aria-live="polite">
+                {copyFeedback}
+              </p>
+            </div>
           </div>
         </section>
       </main>

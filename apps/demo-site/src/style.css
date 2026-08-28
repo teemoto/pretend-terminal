@@ -120,7 +120,8 @@ code,
 .terminal-section,
 .value-section,
 .sandbox-section,
-.theme-gallery-section {
+.theme-gallery-section,
+.snippets-section {
   padding: 6.5rem 0;
 }
 
@@ -298,7 +299,8 @@ h3 {
 .terminal-section,
 .value-section,
 .sandbox-section,
-.theme-gallery-section {
+.theme-gallery-section,
+.snippets-section {
   border-top: 1px solid var(--site-border);
 }
 
@@ -528,6 +530,80 @@ h3 {
   color: var(--theme-card-error);
 }
 
+.snippet-panel {
+  background: var(--site-panel);
+  border: 1px solid var(--site-border);
+  border-radius: 0.65rem;
+  margin-top: 2.5rem;
+  overflow: hidden;
+}
+
+.snippet-tabs {
+  border-bottom: 1px solid var(--site-border);
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.6rem 0.6rem 0;
+}
+
+.snippet-tabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--site-link);
+  cursor: pointer;
+  font:
+    700 0.78rem/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  padding: 0.6rem 0.7rem;
+  white-space: nowrap;
+}
+
+.snippet-tabs button.is-selected {
+  border-bottom-color: var(--site-accent);
+  color: var(--site-heading);
+}
+
+.snippet-code {
+  background: var(--site-background);
+  color: var(--site-text);
+  font:
+    0.8rem/1.6 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace;
+  margin: 0;
+  max-height: 31rem;
+  overflow: auto;
+  padding: 1.25rem;
+  tab-size: 2;
+}
+
+.snippet-actions {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.snippet-actions .button {
+  cursor: pointer;
+}
+
+.copy-feedback {
+  color: var(--site-subtle);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
 .value-grid article {
   background: var(--site-panel);
   border: 1px solid var(--site-border);
@@ -578,7 +654,8 @@ h3 {
   .terminal-section,
   .value-section,
   .sandbox-section,
-  .theme-gallery-section {
+  .theme-gallery-section,
+  .snippets-section {
     padding: 4.5rem 0;
   }
 

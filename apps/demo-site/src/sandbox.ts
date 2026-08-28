@@ -53,8 +53,8 @@ export function applyBuiltInTheme(
   };
 }
 
-/** Creates the entirely declarative terminal configuration used by the sandbox preview. */
-export function createSandboxTerminalConfig(settings: SandboxSettings): TerminalConfig {
+/** Creates the JSON-compatible configuration shared by the preview and generated snippets. */
+export function createPortableSandboxConfig(settings: SandboxSettings): TerminalConfig {
   return {
     prompt: normalizePrompt(settings.prompt),
     height: '25rem',
@@ -89,4 +89,9 @@ export function createSandboxTerminalConfig(settings: SandboxSettings): Terminal
       },
     ],
   };
+}
+
+/** Creates the sandbox preview configuration with its demo-specific fixed height. */
+export function createSandboxTerminalConfig(settings: SandboxSettings): TerminalConfig {
+  return { ...createPortableSandboxConfig(settings), height: '25rem' };
 }
