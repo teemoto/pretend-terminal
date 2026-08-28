@@ -1,11 +1,45 @@
 import { PretendTerminal } from '@pretend-terminal/react';
 import { createRoot } from 'react-dom/client';
+import { useEffect, useState } from 'react';
 
 import '@pretend-terminal/react/styles.css';
+import {
+  applySiteAppearance,
+  readSiteAppearance,
+  resolveAppearance,
+  type SiteAppearance,
+  writeSiteAppearance,
+} from './appearance.js';
 import { onboardingTerminalConfig } from './onboarding.js';
 import './style.css';
 
+const appearanceOptions = [
+  { value: 'system', label: 'System' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+] as const satisfies readonly { readonly value: SiteAppearance; readonly label: string }[];
+
 function App() {
+  const [appearance, setAppearance] = useState<SiteAppearance>(readSiteAppearance);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => applySiteAppearance(resolveAppearance(appearance, media.matches));
+
+    apply();
+    if (appearance !== 'system') {
+      return;
+    }
+
+    media.addEventListener('change', apply);
+    return () => media.removeEventListener('change', apply);
+  }, [appearance]);
+
+  const chooseAppearance = (nextAppearance: SiteAppearance) => {
+    setAppearance(nextAppearance);
+    writeSiteAppearance(nextAppearance);
+  };
+
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -19,6 +53,23 @@ function App() {
             GitHub
           </a>
         </nav>
+        <fieldset className="appearance-switcher">
+          <legend className="visually-hidden">Site appearance</legend>
+          {appearanceOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={appearance === option.value ? 'is-selected' : undefined}
+              aria-label={option.label}
+              aria-pressed={appearance === option.value}
+              data-tooltip={option.label}
+              title={option.label}
+              onClick={() => chooseAppearance(option.value)}
+            >
+              <AppearanceIcon appearance={option.value} />
+            </button>
+          ))}
+        </fieldset>
       </header>
 
       <main id="top">
@@ -121,6 +172,32 @@ function App() {
         </a>
       </footer>
     </div>
+  );
+}
+
+function AppearanceIcon({ appearance }: { readonly appearance: SiteAppearance }) {
+  if (appearance === 'dark') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M20.4 15.1A8.3 8.3 0 0 1 8.9 3.6 8.3 8.3 0 1 0 20.4 15.1Z" />
+      </svg>
+    );
+  }
+
+  if (appearance === 'light') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="13" rx="1.5" />
+      <path d="M8 21h8m-4-4v4" />
+    </svg>
   );
 }
 

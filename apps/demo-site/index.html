@@ -8,6 +8,24 @@
       content="Try and configure Pretend Terminal, a safe pseudo-terminal for the web."
     />
     <title>Pretend Terminal — Demo</title>
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem('pretend-terminal-demo:appearance');
+          const preference = stored === 'dark' || stored === 'light' ? stored : 'system';
+          const appearance =
+            preference === 'system'
+              ? matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : preference;
+          document.documentElement.dataset.siteAppearance = appearance;
+          document.documentElement.style.colorScheme = appearance;
+        } catch {
+          // The CSS default remains a usable dark appearance.
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
