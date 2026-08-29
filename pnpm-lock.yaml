@@ -62,11 +62,11 @@ importers:
   apps/demo-site:
     dependencies:
       '@pretend-terminal/core':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.2.2
+        version: 0.2.2
       '@pretend-terminal/react':
-        specifier: 0.2.0
-        version: 0.2.0(react@19.2.8)
+        specifier: 0.2.2
+        version: 0.2.2(react@19.2.8)
       react:
         specifier: ^19.2.1
         version: 19.2.8
@@ -733,17 +733,17 @@ packages:
         integrity: sha512-XC0QsnnhVe7sLIWmYmdPw7x5P0h4W8vUU3Nv1ySgWXtvCz8NizoAEpGXA0sOYoJQV2Rl13LgURAHQ5cI5ILCSA==,
       }
 
-  '@pretend-terminal/core@0.2.0':
+  '@pretend-terminal/core@0.2.2':
     resolution:
       {
-        integrity: sha512-BfQhJGYplkvD60k3D9OwFsSvZGBw7+AuV91Yuz8FY2/PIJSSEreUKn6Ybr/ii9v09WrR4hn0J348LW4jrsziCg==,
+        integrity: sha512-95QDrk+72QD4tl1fZq3qYb0US9oWWys1eEHEnQzIXh7bIxGyUlGOrXhN1gOVZkj4S/UXk+0cRuueeSJUa/jfFw==,
       }
     engines: { node: '>=22.13.0' }
 
-  '@pretend-terminal/react@0.2.0':
+  '@pretend-terminal/react@0.2.2':
     resolution:
       {
-        integrity: sha512-lu6veT/fdpUJi/3OA9bxr57JV2YJNOg6h39dsInctV3SiLNFAtIyh5+aV6Hw2zBraHYvTdItCBpV9P8Eq+x4lg==,
+        integrity: sha512-XMg1ogNNzPNA7ui0z4BBAqAh+QIIeC4RUPalH5NgZx6aY7B9FDfSp36rfedCKHYfYYQc3GqEu4ROdF3lDHMBfg==,
       }
     engines: { node: '>=22.13.0' }
     peerDependencies:
@@ -3563,11 +3563,11 @@ snapshots:
 
   '@oxc-project/types@0.146.0': {}
 
-  '@pretend-terminal/core@0.2.0': {}
+  '@pretend-terminal/core@0.2.2': {}
 
-  '@pretend-terminal/react@0.2.0(react@19.2.8)':
+  '@pretend-terminal/react@0.2.2(react@19.2.8)':
     dependencies:
-      '@pretend-terminal/core': 0.2.0
+      '@pretend-terminal/core': 0.2.2
       react: 19.2.8
 
   '@rolldown/binding-android-arm-eabi@1.2.5':
