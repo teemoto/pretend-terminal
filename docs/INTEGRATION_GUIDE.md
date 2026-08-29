@@ -74,6 +74,48 @@ terminal.clear();
 terminal.destroy();
 ```
 
+## Astro
+
+Use the core package in an Astro client-side `<script>`. Import its stylesheet alongside the terminal module, then mount the terminal after locating its container.
+
+```astro
+<div id="about-terminal"></div>
+
+<script>
+  import { createTerminal } from '@pretend-terminal/core';
+  import '@pretend-terminal/core/styles.css';
+
+  const mount = document.querySelector('#about-terminal');
+
+  if (mount) {
+    createTerminal(mount, {
+      prompt: 'teemo@site:~ $',
+      commands: [
+        {
+          name: 'about',
+          response: { type: 'text', value: 'Built with Pretend Terminal.' },
+        },
+      ],
+    });
+  }
+</script>
+```
+
+You can instead import the stylesheet from component or shared-layout frontmatter when that suits the site's organization. The package CSS is globally loaded but every library rule is scoped to `.pt-terminal`.
+
+After upgrading Pretend Terminal, stop the dev server and start Astro with a forced dependency rebuild if the browser still shows old terminal CSS:
+
+```sh
+pnpm dev -- --force
+```
+
+If that does not refresh the stylesheet, remove only Vite's disposable cache while the server is stopped, then restart with the same command:
+
+```sh
+rm -rf node_modules/.vite
+pnpm dev -- --force
+```
+
 ## React
 
 Install the React package:
