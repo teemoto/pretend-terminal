@@ -33,6 +33,16 @@ describe('the public core type contract', () => {
     expect(manifest.homepage).toBe('https://teemoto.github.io/pretend-terminal/');
   });
 
+  it('keeps the command field visually terminal-like when a consumer has global input styles', () => {
+    const stylesheet = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
+
+    expect(stylesheet).toContain('.pt-terminal .pt-input:focus');
+    expect(stylesheet).toContain('.pt-terminal .pt-input:focus-visible');
+    expect(stylesheet).toContain('border: 0;');
+    expect(stylesheet).toContain('outline: 0;');
+    expect(stylesheet).toContain('box-shadow: none;');
+  });
+
   it('type-checks the README and integration-guide vanilla, JSON, and dynamic-command configurations', () => {
     const vanillaConfig = {
       prompt: 'visitor@site:~ $',

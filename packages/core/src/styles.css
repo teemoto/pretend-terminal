@@ -84,7 +84,9 @@
   white-space: pre;
 }
 
-.pt-input {
+.pt-terminal .pt-input,
+.pt-terminal .pt-input:focus,
+.pt-terminal .pt-input:focus-visible {
   flex: 1 1 auto;
   min-width: 0;
   padding: 0;
@@ -92,6 +94,7 @@
   background: transparent;
   border: 0;
   outline: 0;
+  box-shadow: none;
   font: inherit;
 }
 
