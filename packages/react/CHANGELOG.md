@@ -1,5 +1,13 @@
 # @pretend-terminal/react
 
+## 0.2.1
+
+### Patch Changes
+
+- b47cc38: Point the npm package homepage at the live demo site. Harden the command-input reset so ordinary consumer focus styles do not add visible input chrome to the terminal.
+- Updated dependencies [b47cc38]
+  - @pretend-terminal/core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

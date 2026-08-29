@@ -1,6 +1,6 @@
 {
   "name": "@pretend-terminal/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Framework-independent pseudo-terminal engine and vanilla JavaScript API.",
   "keywords": [
     "terminal",
