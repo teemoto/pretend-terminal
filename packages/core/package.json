@@ -16,7 +16,7 @@
     "url": "git+https://github.com/teemoto/pretend-terminal.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/teemoto/pretend-terminal#readme",
+  "homepage": "https://teemoto.github.io/pretend-terminal/",
   "bugs": {
     "url": "https://github.com/teemoto/pretend-terminal/issues"
   },

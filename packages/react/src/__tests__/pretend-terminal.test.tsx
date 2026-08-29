@@ -27,6 +27,14 @@ describe('PretendTerminal', () => {
     });
   });
 
+  it('points npm visitors to the live demo', () => {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
+      readonly homepage: string;
+    };
+
+    expect(manifest.homepage).toBe('https://teemoto.github.io/pretend-terminal/');
+  });
+
   it('type-checks the README and integration-guide React usage snippets', () => {
     const props = {
       prompt: 'visitor@site:~ $',

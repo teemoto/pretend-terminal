@@ -25,6 +25,14 @@ describe('the public core type contract', () => {
     });
   });
 
+  it('points npm visitors to the live demo', () => {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
+      readonly homepage: string;
+    };
+
+    expect(manifest.homepage).toBe('https://teemoto.github.io/pretend-terminal/');
+  });
+
   it('type-checks the README and integration-guide vanilla, JSON, and dynamic-command configurations', () => {
     const vanillaConfig = {
       prompt: 'visitor@site:~ $',
