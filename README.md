@@ -435,7 +435,7 @@ The immediate goal is a polished, documented v1. Advanced possibilities—such a
 
 ## Contributing
 
-Contributions and issue reports are welcome. Start with the [v1 requirements](docs/PRD.md) and open an issue if you would like to discuss a larger change first.
+Contributions and issue reports are welcome. Read the [contributing guide](CONTRIBUTING.md) for bug-report details, local setup, testing expectations, release-note guidance, and when to open an issue before starting work.
 
 ## License
 
