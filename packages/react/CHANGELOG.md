@@ -1,5 +1,13 @@
 # @pretend-terminal/react
 
+## 0.2.2
+
+### Patch Changes
+
+- 87a693a: Prevent global consumer focus styles from adding input chrome to the terminal command field.
+- Updated dependencies [87a693a]
+  - @pretend-terminal/core@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

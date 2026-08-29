@@ -1,7 +1,7 @@
 {
   "name": "@pretend-terminal/demo-site",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "build": "vite build",
@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pretend-terminal/core": "0.2.1",
-    "@pretend-terminal/react": "0.2.1",
+    "@pretend-terminal/core": "0.2.2",
+    "@pretend-terminal/react": "0.2.2",
     "react": "^19.2.1",
     "react-dom": "^19.2.8"
   }
