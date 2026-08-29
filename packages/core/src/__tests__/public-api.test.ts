@@ -38,9 +38,9 @@ describe('the public core type contract', () => {
 
     expect(stylesheet).toContain('.pt-terminal .pt-input:focus');
     expect(stylesheet).toContain('.pt-terminal .pt-input:focus-visible');
-    expect(stylesheet).toContain('border: 0;');
-    expect(stylesheet).toContain('outline: 0;');
-    expect(stylesheet).toContain('box-shadow: none;');
+    expect(stylesheet).toContain('border: 0 !important;');
+    expect(stylesheet).toContain('outline: 0 !important;');
+    expect(stylesheet).toContain('box-shadow: none !important;');
   });
 
   it('type-checks the README and integration-guide vanilla, JSON, and dynamic-command configurations', () => {
