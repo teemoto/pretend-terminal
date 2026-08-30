@@ -1,6 +1,6 @@
 {
   "name": "pretend-terminal",
-  "version": "0.0.0",
+  "version": "0.2.2",
   "private": true,
   "description": "A safe, configurable pseudo-terminal for the web.",
   "license": "MIT",
