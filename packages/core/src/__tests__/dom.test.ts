@@ -294,6 +294,8 @@ describe('createTerminal', () => {
 
     expect(mount.textContent).toContain('Scout status: ready.');
     expect(input.value).toBe('status');
+    expect(mount.querySelector('[data-pt-pending]')?.textContent).toBe('');
+    expect(mount.querySelector('[data-pt-root]')?.hasAttribute('data-pt-executing')).toBe(false);
     terminal.destroy();
   });
 
@@ -441,6 +443,85 @@ describe('createTerminal', () => {
     expect(tab.defaultPrevented).toBe(false);
 
     terminal.destroy();
+  });
+
+  it('focuses through its imperative API without stealing link interaction', async () => {
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const terminal = createTerminal(mount, {
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'profile',
+          response: { type: 'link', label: 'Teemo profile', href: 'https://example.com/teemo' },
+        },
+      ],
+    });
+    const input = mount.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!input) {
+      throw new Error('Expected a terminal input.');
+    }
+
+    terminal.focus();
+    expect(document.activeElement).toBe(input);
+
+    await terminal.run('profile');
+    const focus = vi.spyOn(input, 'focus');
+    const link = mount.querySelector('a');
+    link?.addEventListener('click', (event) => event.preventDefault());
+    link?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+    expect(focus).not.toHaveBeenCalled();
+
+    terminal.destroy();
+    mount.remove();
+  });
+
+  it('restores persisted history and theme when a terminal is remounted', async () => {
+    const storageKey = 'teemo-dom-remount';
+    const historyKey = createTerminalStorageKey(storageKey, 'history');
+    const themeKey = createTerminalStorageKey(storageKey, 'theme');
+    window.localStorage.removeItem(historyKey);
+    window.localStorage.removeItem(themeKey);
+
+    const config = {
+      includeBuiltIns: false,
+      storage: {
+        enabled: true as const,
+        key: storageKey,
+        persistHistory: true,
+        persistTheme: true,
+      },
+      commands: [{ name: 'about', response: { type: 'text' as const, value: 'Captain Teemo.' } }],
+    };
+    const firstMount = document.createElement('div');
+    document.body.append(firstMount);
+    const firstTerminal = createTerminal(firstMount, config);
+
+    await firstTerminal.run('about');
+    firstTerminal.setTheme('matrix');
+    firstTerminal.destroy();
+    firstMount.remove();
+
+    const secondMount = document.createElement('div');
+    document.body.append(secondMount);
+    const secondTerminal = createTerminal(secondMount, config);
+    const root = secondMount.querySelector<HTMLElement>('[data-pt-root]');
+    const input = secondMount.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!root || !input) {
+      throw new Error('Expected a terminal root and input.');
+    }
+
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, cancelable: true }),
+    );
+    expect(input.value).toBe('about');
+    expect(root.style.getPropertyValue('--pt-theme-background')).toBe('#020a02');
+
+    secondTerminal.destroy();
+    secondMount.remove();
+    window.localStorage.removeItem(historyKey);
+    window.localStorage.removeItem(themeKey);
   });
 
   it('keeps concurrent terminals with overlapping commands and distinct configs independent', async () => {
