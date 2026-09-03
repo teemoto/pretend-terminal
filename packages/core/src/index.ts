@@ -27,6 +27,10 @@ export {
 
 export { createTerminalEngine, TerminalEngineError } from './engine.js';
 
+export { parseCommandLine } from './parser.js';
+
+export type { CommandLineParseError, CommandLineParseResult, ParsedCommandLine } from './parser.js';
+
 export { isSafeLinkHref } from './links.js';
 
 export { createTerminal, TerminalMountError } from './dom.js';
