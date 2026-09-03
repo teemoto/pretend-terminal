@@ -116,6 +116,58 @@ describe('PretendTerminal', () => {
     await act(async () => root.unmount());
   });
 
+  it('keeps terminal configuration initialization-time while presentation props update', async () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          ariaLabel="Initial Teemo terminal"
+          className="teemo-initial"
+          style={{ '--pt-accent': '#9acd32' } as never}
+          prompt="teemo@first:~ $"
+          theme="matrix"
+          includeBuiltIns={false}
+          commands={[{ name: 'about', response: { type: 'text', value: 'First scout report.' } }]}
+        />,
+      );
+    });
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          ariaLabel="Updated Teemo terminal"
+          className="teemo-updated"
+          style={{ '--pt-accent': '#d7ba7d' } as never}
+          prompt="teemo@updated:~ $"
+          theme="dracula"
+          includeBuiltIns={false}
+          commands={[{ name: 'about', response: { type: 'text', value: 'Updated scout report.' } }]}
+        />,
+      );
+    });
+
+    const terminal = container.querySelector<HTMLElement>('[data-pt-root]');
+    const input = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!terminal || !input) {
+      throw new Error('Expected a terminal root and input.');
+    }
+    expect(terminal.getAttribute('aria-label')).toBe('Updated Teemo terminal');
+    expect(terminal.classList.contains('teemo-initial')).toBe(false);
+    expect(terminal.classList.contains('teemo-updated')).toBe(true);
+    expect(terminal.style.getPropertyValue('--pt-accent')).toBe('#d7ba7d');
+    expect(terminal.style.getPropertyValue('--pt-theme-background')).toBe('#020a02');
+
+    await type(input, 'about');
+    await press(input, 'Enter');
+    expect(container.textContent).toContain('teemo@first:~ $ about');
+    expect(container.textContent).toContain('First scout report.');
+    expect(container.textContent).not.toContain('Updated scout report.');
+
+    await act(async () => root.unmount());
+  });
+
   it('applies a configured fixed height to contain a scrolling transcript', async () => {
     const container = document.createElement('div');
     const root = createRoot(container);
@@ -509,6 +561,58 @@ describe('PretendTerminal', () => {
       throw new Error('Expected a terminal input.');
     }
     expect(container.textContent).not.toContain('First scout report.');
+    await type(secondInput, 'status');
+    await press(secondInput, 'Enter');
+    expect(container.textContent).toContain('Fresh scout report.');
+
+    await act(async () => root.unmount());
+  });
+
+  it('does not leak resolved async output into a terminal remounted after unmount', async () => {
+    let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[
+            {
+              name: 'status',
+              handler: () =>
+                new Promise((resolve) => {
+                  resolveStatus = resolve;
+                }),
+            },
+          ]}
+        />,
+      );
+    });
+    const firstInput = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!firstInput) {
+      throw new Error('Expected a terminal input.');
+    }
+    await type(firstInput, 'status');
+    await press(firstInput, 'Enter');
+    expect(container.querySelector('[data-pt-pending]')?.textContent).toBe('Running…');
+
+    await act(async () => root.render(null));
+    await act(async () => {
+      root.render(
+        <PretendTerminal
+          includeBuiltIns={false}
+          commands={[{ name: 'status', response: { type: 'text', value: 'Fresh scout report.' } }]}
+        />,
+      );
+    });
+    await act(async () => resolveStatus?.({ type: 'success', value: 'Stale scout report.' }));
+
+    expect(container.textContent).not.toContain('Stale scout report.');
+    const secondInput = container.querySelector<HTMLInputElement>('[data-pt-input]');
+    if (!secondInput) {
+      throw new Error('Expected a remounted terminal input.');
+    }
     await type(secondInput, 'status');
     await press(secondInput, 'Enter');
     expect(container.textContent).toContain('Fresh scout report.');
