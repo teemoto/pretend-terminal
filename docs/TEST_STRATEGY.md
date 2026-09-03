@@ -104,6 +104,36 @@ Pushes to `main` and release preparation additionally run the supported cross-br
 
 CI job names and local scripts should identify the layer they run—for example `test:unit`, `test:integration`, `test:e2e`, and `test:consumer`—so a contributor can reproduce one failure without rerunning unrelated checks.
 
+## Local reproduction and release validation
+
+Install dependencies once with `corepack pnpm install --frozen-lockfile`. The required checks can then be run independently:
+
+```sh
+corepack pnpm format:check
+corepack pnpm lint
+corepack pnpm typecheck
+corepack pnpm test:core
+corepack pnpm test:react
+corepack pnpm build
+corepack pnpm test:consumer
+```
+
+Install Playwright's required browser once on a development machine before browser testing:
+
+```sh
+corepack pnpm exec playwright install chromium
+corepack pnpm test:e2e
+```
+
+The Chromium suite is the pull-request gate. Before a release—or to reproduce the `main` branch matrix—also install and run Firefox and WebKit:
+
+```sh
+corepack pnpm exec playwright install firefox webkit
+corepack pnpm test:e2e:cross-browser
+```
+
+All E2E runs have zero retries and a 15-second test limit. Playwright saves traces, screenshots, and video only for failures; CI uploads those artifacts for 14 days. The packed-consumer check builds the packages itself, creates a temporary directory outside the workspace, installs only the packed tarballs plus their declared development tooling, type-checks the vanilla and React quick starts, verifies both CSS artifacts, and removes the temporary directory afterward.
+
 ## Completion standard
 
 The v1 testing epic can close only when the matrix has evidence for every v1 PRD release criterion, all required automated layers are enforced in CI, and the manual plan contains only human-verification work that cannot be replaced credibly by automation.

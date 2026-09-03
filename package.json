@@ -20,7 +20,11 @@
     "lint": "eslint .",
     "release": "changeset publish",
     "test": "corepack pnpm --recursive --if-present run test",
-    "test:e2e": "corepack pnpm --filter @pretend-terminal/example-vanilla build && corepack pnpm --filter @pretend-terminal/example-react build && playwright test",
+    "test:consumer": "node scripts/verify-package-consumer.mjs",
+    "test:core": "corepack pnpm --filter @pretend-terminal/core test",
+    "test:e2e": "corepack pnpm --filter @pretend-terminal/example-vanilla build && corepack pnpm --filter @pretend-terminal/example-react build && playwright test --project=chromium",
+    "test:e2e:cross-browser": "corepack pnpm --filter @pretend-terminal/example-vanilla build && corepack pnpm --filter @pretend-terminal/example-react build && playwright test --project=firefox --project=webkit",
+    "test:react": "corepack pnpm --filter @pretend-terminal/react test",
     "typecheck": "corepack pnpm --filter @pretend-terminal/core build && corepack pnpm --recursive --if-present run typecheck",
     "version-packages": "changeset version"
   },
