@@ -20,12 +20,14 @@
     "lint": "eslint .",
     "release": "changeset publish",
     "test": "corepack pnpm --recursive --if-present run test",
+    "test:e2e": "corepack pnpm --filter @pretend-terminal/example-vanilla build && corepack pnpm --filter @pretend-terminal/example-react build && playwright test",
     "typecheck": "corepack pnpm --filter @pretend-terminal/core build && corepack pnpm --recursive --if-present run typecheck",
     "version-packages": "changeset version"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.4",
