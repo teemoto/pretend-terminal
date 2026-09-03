@@ -117,14 +117,30 @@ describe('createTerminalEngine', () => {
   it('uses a configured JSON-friendly message for unknown commands', async () => {
     const engine = createTerminalEngine({
       includeBuiltIns: false,
-      messages: { unknownCommand: 'Teemo does not recognize: {command}.' },
+      messages: { unknownCommand: 'Teemo does not recognize: {command}. Try {command} again.' },
     });
 
     await engine.run('dance');
 
     expect(engine.getState().transcript.at(-1)).toEqual({
       kind: 'output',
-      output: { type: 'error', value: 'Teemo does not recognize: dance.' },
+      output: { type: 'error', value: 'Teemo does not recognize: dance. Try dance again.' },
+    });
+  });
+
+  it('supplies the submitted, normalized, and canonical command values to dynamic handlers', async () => {
+    const handler = vi.fn(() => ({ type: 'text' as const, value: 'Captain Teemo on duty.' }));
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [{ name: 'about', aliases: ['whoami'], handler }],
+    });
+
+    await engine.run('  WHOAMI  ');
+
+    expect(handler).toHaveBeenCalledWith({
+      rawInput: '  WHOAMI  ',
+      normalizedInput: 'whoami',
+      commandName: 'about',
     });
   });
 
@@ -301,6 +317,27 @@ describe('createTerminalEngine', () => {
     expect(engine.getState().input).toBe('');
   });
 
+  it('keeps the transcript but disables retained command history when the limit is zero', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      historyLimit: 0,
+      commands: [{ name: 'echo', response: { type: 'text', value: 'Teemo.' } }],
+    });
+
+    await engine.run('echo');
+    await engine.run('echo');
+
+    expect(engine.getState()).toMatchObject({
+      history: [],
+      transcript: [
+        { kind: 'command', value: 'echo' },
+        { kind: 'output', output: { type: 'text', value: 'Teemo.' } },
+        { kind: 'command', value: 'echo' },
+        { kind: 'output', output: { type: 'text', value: 'Teemo.' } },
+      ],
+    });
+  });
+
   it('keeps a long session transcript while retaining only the configured recent history', async () => {
     const engine = createTerminalEngine({
       includeBuiltIns: false,
@@ -368,6 +405,38 @@ describe('createTerminalEngine', () => {
     expect(storage.get).not.toHaveBeenCalled();
     expect(storage.set).not.toHaveBeenCalled();
     expect(storage.remove).not.toHaveBeenCalled();
+  });
+
+  it('continues command execution and theme updates when configured storage rejects writes', async () => {
+    const storage = {
+      get: vi.fn(() => null),
+      set: vi.fn(() => {
+        throw new Error('quota exceeded');
+      }),
+      remove: vi.fn(() => {
+        throw new Error('storage access denied');
+      }),
+    };
+    const engine = createTerminalEngine(
+      {
+        includeBuiltIns: false,
+        storage: {
+          enabled: true,
+          key: 'teemo-terminal',
+          persistHistory: true,
+          persistTheme: true,
+        },
+        commands: [{ name: 'about', response: { type: 'text', value: 'Captain Teemo on duty.' } }],
+      },
+      { storage },
+    );
+
+    await expect(engine.run('about')).resolves.toMatchObject({ status: 'executed' });
+    expect(() => engine.setTheme({ accent: '#9acd32' })).not.toThrow();
+    expect(engine.getState()).toMatchObject({
+      history: ['about'],
+      theme: { name: 'custom', tokens: { accent: '#9acd32' } },
+    });
   });
 
   it('does not touch storage when enabled persistence has a blank consumer key', () => {
