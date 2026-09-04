@@ -65,6 +65,26 @@ describe('createCommandRegistry', () => {
     });
   });
 
+  it('resolves explicitly declared subcommands without treating multi-word names as a tree', () => {
+    const registry = createCommandRegistry({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'project',
+          subcommands: [
+            { name: 'create', aliases: ['new'], response: { type: 'text', value: 'Created.' } },
+          ],
+        },
+        { name: 'About Teemo', response: { type: 'text', value: 'Captain Teemo on duty.' } },
+      ],
+    });
+
+    const project = registry.get('project');
+    if (!project || project.source !== 'consumer') throw new Error('Expected project group.');
+    expect(registry.getSubcommand(project, 'NEW')).toMatchObject({ name: 'create' });
+    expect(registry.get('about teemo')).toMatchObject({ name: 'About Teemo' });
+  });
+
   it('rejects blank keys and collisions across names and aliases', () => {
     expect(() =>
       createCommandRegistry({

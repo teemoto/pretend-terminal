@@ -33,6 +33,8 @@ export interface RegisteredBuiltInCommand extends RegisteredCommandBase {
 export interface RegisteredConsumerCommand extends RegisteredCommandBase {
   readonly source: 'consumer';
   readonly command: Command;
+  /** Explicit child commands, in consumer declaration order. */
+  readonly subcommands: readonly RegisteredConsumerCommand[];
   readonly builtIn?: never;
 }
 
@@ -45,6 +47,11 @@ export interface CommandRegistry {
   readonly commands: readonly RegisteredCommand[];
   /** Finds a command by its canonical name or alias. */
   get(input: string): RegisteredCommand | undefined;
+  /** Finds an explicitly declared child command by canonical name or alias. */
+  getSubcommand(
+    parent: RegisteredConsumerCommand,
+    input: string,
+  ): RegisteredConsumerCommand | undefined;
 }
 
 /** Thrown when configured names or aliases cannot be resolved unambiguously. */
@@ -110,6 +117,9 @@ export function createCommandRegistry(
     get(input) {
       return commandsByKey.get(normalizeCommand(input));
     },
+    getSubcommand(parent, input) {
+      return createLookup(parent.subcommands).get(normalizeCommand(input));
+    },
   };
 }
 
@@ -127,6 +137,9 @@ function createBuiltInCommand(definition: BuiltInCommandDefinition): RegisteredB
 
 function createConsumerCommand(command: Command): RegisteredConsumerCommand {
   const aliases = command.aliases ?? [];
+  const subcommands =
+    'subcommands' in command ? command.subcommands.map(createConsumerCommand) : [];
+  createLookup(subcommands);
 
   return {
     source: 'consumer',
@@ -136,7 +149,19 @@ function createConsumerCommand(command: Command): RegisteredConsumerCommand {
     aliases,
     normalizedAliases: aliases.map((alias) => requireCommandKey(alias, 'alias')),
     description: command.description,
+    subcommands,
   };
+}
+
+function createLookup(
+  commands: readonly RegisteredConsumerCommand[],
+): ReadonlyMap<string, RegisteredConsumerCommand> {
+  const commandsByKey = new Map<string, RegisteredConsumerCommand>();
+  for (const command of commands) {
+    registerKey(commandsByKey, command.normalizedName, command);
+    for (const alias of command.normalizedAliases) registerKey(commandsByKey, alias, command);
+  }
+  return commandsByKey;
 }
 
 function requireCommandKey(value: string, field: 'name' | 'alias'): string {
