@@ -115,6 +115,31 @@ export interface TerminalMessages {
   readonly unknownCommand?: string;
 }
 
+/** Declarative validation for one positional command argument. */
+export interface CommandArgumentSchema {
+  readonly name: string;
+  readonly description?: string;
+  readonly required?: boolean;
+  readonly default?: string;
+  readonly values?: readonly string[];
+}
+
+/** Declarative validation for one named command flag. */
+export interface CommandFlagSchema {
+  readonly name: string;
+  readonly description?: string;
+  readonly type?: 'boolean' | 'string';
+  readonly required?: boolean;
+  readonly default?: boolean | string;
+  readonly values?: readonly string[];
+}
+
+/** Named values that have passed a command schema. */
+export interface ValidatedCommandValues {
+  readonly arguments: Readonly<Record<string, string>>;
+  readonly flags: Readonly<Record<string, boolean | string>>;
+}
+
 /** Context supplied to a dynamic command handler. */
 export interface CommandHandlerContext {
   /** The exact non-empty input submitted by the visitor. */

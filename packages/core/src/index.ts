@@ -2,6 +2,8 @@ export type {
   AsciiOutput,
   BuiltInThemeName,
   Command,
+  CommandArgumentSchema,
+  CommandFlagSchema,
   CommandHandler,
   CommandHandlerContext,
   LinkOutput,
@@ -13,10 +15,18 @@ export type {
   TerminalOutputBlock,
   TerminalStorageConfig,
   TextOutput,
+  ValidatedCommandValues,
   ThemeName,
   ThemeTokens,
   LinesOutput,
 } from './types.js';
+
+export { validateCommandSchema } from './schema.js';
+export type {
+  CommandSchema,
+  CommandSchemaValidationError,
+  CommandSchemaValidationResult,
+} from './schema.js';
 
 export {
   BUILT_IN_COMMANDS,
