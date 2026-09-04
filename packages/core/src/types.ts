@@ -148,6 +148,10 @@ export interface CommandHandlerContext {
   readonly normalizedInput: string;
   /** The canonical name of the command being executed. */
   readonly commandName: string;
+  /** Parsed input when this command declares a v2 schema. */
+  readonly parsedInput?: import('./parser.js').ParsedCommandLine;
+  /** Validated named values when this command declares a v2 schema. */
+  readonly values?: ValidatedCommandValues;
 }
 
 /** A function that produces terminal output synchronously or asynchronously. */

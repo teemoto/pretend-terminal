@@ -144,6 +144,36 @@ describe('createTerminalEngine', () => {
     });
   });
 
+  it('validates schema-backed commands before execution without changing multi-word v1 lookup', async () => {
+    const handler = vi.fn(() => ({ type: 'success' as const, value: 'Created.' }));
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'deploy',
+          arguments: [{ name: 'name', required: true }],
+          flags: [{ name: 'visibility', type: 'string', values: ['private', 'public'] }],
+          handler,
+        },
+        { name: 'About Teemo', response: { type: 'text', value: 'Captain Teemo on duty.' } },
+      ],
+    });
+
+    await expect(engine.run('deploy scout --visibility=public')).resolves.toMatchObject({
+      status: 'executed',
+    });
+    expect(handler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        values: { arguments: { name: 'scout' }, flags: { visibility: 'public' } },
+      }),
+    );
+    await expect(engine.run('deploy scout --visibility=team')).resolves.toMatchObject({
+      status: 'invalid',
+    });
+    expect(handler).toHaveBeenCalledTimes(1);
+    await expect(engine.run('about teemo')).resolves.toMatchObject({ status: 'executed' });
+  });
+
   it('rejects concurrent asynchronous commands and exposes execution state', async () => {
     let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
     const engine = createTerminalEngine({

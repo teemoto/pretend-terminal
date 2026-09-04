@@ -6,6 +6,8 @@ import {
   type RegisteredCommand,
 } from './registry.js';
 import { createCommandFailureOutput, createUnknownCommandOutput } from './output.js';
+import { parseCommandLine, type ParsedCommandLine } from './parser.js';
+import { validateCommandSchema } from './schema.js';
 import { createTerminalStorageKey, type TerminalStorageAdapter } from './storage.js';
 import { resolveTheme, type ResolvedTerminalTheme, type TerminalThemeInput } from './themes.js';
 import type {
@@ -13,6 +15,7 @@ import type {
   TerminalConfig,
   TerminalOutput,
   TerminalOutputBlock,
+  ValidatedCommandValues,
   ThemeName,
 } from './types.js';
 
@@ -47,6 +50,7 @@ export interface TerminalEngineState {
 /** Result of attempting to submit terminal input. */
 export type TerminalRunResult =
   | { readonly status: 'ignored' | 'busy' }
+  | { readonly status: 'invalid'; readonly input: string; readonly message: string }
   | { readonly status: 'unknown'; readonly input: string }
   | { readonly status: 'executed'; readonly command: RegisteredCommand }
   | { readonly status: 'cleared'; readonly command: RegisteredBuiltInCommand };
@@ -268,7 +272,12 @@ export function createTerminalEngine(
     }
 
     const submittedInput = input.trim();
-    const command = registry.get(input);
+    const exactCommand = registry.get(input);
+    const parsedResult = exactCommand ? undefined : parseCommandLine(input);
+    const parsedCommand = parsedResult?.ok
+      ? registry.get(parsedResult.value.commandPath[0])
+      : undefined;
+    const command = exactCommand ?? (hasSchema(parsedCommand) ? parsedCommand : undefined);
     inputValue = '';
     resetHistoryNavigation();
     clearCompletionSuggestions();
@@ -277,6 +286,11 @@ export function createTerminalEngine(
     config.onCommand?.(submittedInput);
 
     if (!command) {
+      if (parsedResult && !parsedResult.ok) {
+        appendOutput({ type: 'error', value: parsedResult.error.message });
+        emit();
+        return { status: 'invalid', input: submittedInput, message: parsedResult.error.message };
+      }
       appendOutput(createUnknownCommandOutput(submittedInput, config.messages?.unknownCommand));
       config.onUnknownCommand?.(submittedInput);
       emit();
@@ -295,6 +309,25 @@ export function createTerminalEngine(
       return { status: 'executed', command };
     }
 
+    let parsedInput: ParsedCommandLine | undefined;
+    let values: ValidatedCommandValues | undefined;
+    if (hasSchema(command)) {
+      const parsed = parseCommandLine(input);
+      if (!parsed.ok) {
+        appendOutput({ type: 'error', value: parsed.error.message });
+        emit();
+        return { status: 'invalid', input: submittedInput, message: parsed.error.message };
+      }
+      parsedInput = parsed.value;
+      const validation = validateCommandSchema(parsed.value, command.command);
+      if (!validation.ok) {
+        appendOutput({ type: 'error', value: validation.error.message });
+        emit();
+        return { status: 'invalid', input: submittedInput, message: validation.error.message };
+      }
+      values = validation.value;
+    }
+
     if (command.command.response !== undefined) {
       appendOutput(command.command.response);
       emit();
@@ -309,6 +342,7 @@ export function createTerminalEngine(
         rawInput: input,
         normalizedInput,
         commandName: command.normalizedName,
+        ...(parsedInput && values ? { parsedInput, values } : {}),
       };
       const output = await command.command.handler(context);
       if (destroyed) {
@@ -427,6 +461,15 @@ export function createTerminalEngine(
     clear,
     destroy,
   };
+}
+
+function hasSchema(
+  command: RegisteredCommand | undefined,
+): command is RegisteredCommand & { readonly source: 'consumer' } {
+  return (
+    command?.source === 'consumer' &&
+    (command.command.arguments !== undefined || command.command.flags !== undefined)
+  );
 }
 
 function toCompletionSuggestion(command: RegisteredCommand): TerminalCompletionSuggestion {
