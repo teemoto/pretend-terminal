@@ -277,7 +277,20 @@ export function createTerminalEngine(
     const parsedCommand = parsedResult?.ok
       ? registry.get(parsedResult.value.commandPath[0])
       : undefined;
-    const command = exactCommand ?? (hasSchema(parsedCommand) ? parsedCommand : undefined);
+    let command =
+      exactCommand ?? (canResolveFromParsedInput(parsedCommand) ? parsedCommand : undefined);
+    let parsedForCommand = parsedResult?.ok ? parsedResult.value : undefined;
+    if (isGroup(command) && parsedForCommand) {
+      const childName = parsedForCommand.positionals[0];
+      const child = childName ? registry.getSubcommand(command, childName) : undefined;
+      if (child) {
+        command = child;
+        parsedForCommand = {
+          ...parsedForCommand,
+          positionals: parsedForCommand.positionals.slice(1),
+        };
+      }
+    }
     inputValue = '';
     resetHistoryNavigation();
     clearCompletionSuggestions();
@@ -319,7 +332,9 @@ export function createTerminalEngine(
     let parsedInput: ParsedCommandLine | undefined;
     let values: ValidatedCommandValues | undefined;
     if (hasSchema(command)) {
-      const parsed = parseCommandLine(input);
+      const parsed = parsedForCommand
+        ? { ok: true as const, value: parsedForCommand }
+        : parseCommandLine(input);
       if (!parsed.ok) {
         appendOutput({ type: 'error', value: parsed.error.message });
         emit();
@@ -477,6 +492,16 @@ function hasSchema(
     command?.source === 'consumer' &&
     (command.command.arguments !== undefined || command.command.flags !== undefined)
   );
+}
+
+function isGroup(
+  command: RegisteredCommand | undefined,
+): command is RegisteredCommand & { readonly source: 'consumer' } {
+  return command?.source === 'consumer' && 'subcommands' in command.command;
+}
+
+function canResolveFromParsedInput(command: RegisteredCommand | undefined): boolean {
+  return hasSchema(command) || isGroup(command);
 }
 
 function toCompletionSuggestion(command: RegisteredCommand): TerminalCompletionSuggestion {

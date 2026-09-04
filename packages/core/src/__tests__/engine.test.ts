@@ -174,6 +174,28 @@ describe('createTerminalEngine', () => {
     await expect(engine.run('about teemo')).resolves.toMatchObject({ status: 'executed' });
   });
 
+  it('executes an explicitly declared subcommand and validates only its remaining arguments', async () => {
+    const engine = createTerminalEngine({
+      includeBuiltIns: false,
+      commands: [
+        {
+          name: 'project',
+          subcommands: [
+            {
+              name: 'create',
+              arguments: [{ name: 'name', required: true }],
+              response: { type: 'success', value: 'Created.' },
+            },
+          ],
+        },
+      ],
+    });
+
+    await expect(engine.run('project create teemo')).resolves.toMatchObject({ status: 'executed' });
+    await expect(engine.run('project create')).resolves.toMatchObject({ status: 'invalid' });
+    await expect(engine.run('project')).resolves.toMatchObject({ status: 'invalid' });
+  });
+
   it('rejects concurrent asynchronous commands and exposes execution state', async () => {
     let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
     const engine = createTerminalEngine({
