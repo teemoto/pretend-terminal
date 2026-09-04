@@ -4,6 +4,7 @@ export type {
   Command,
   CommandArgumentSchema,
   CommandFlagSchema,
+  CommandGroup,
   CommandHandler,
   CommandHandlerContext,
   LinkOutput,

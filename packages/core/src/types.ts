@@ -182,8 +182,15 @@ export interface DynamicCommand extends CommandBase {
   readonly response?: never;
 }
 
-/** A configured terminal command. Commands use either a response or a handler. */
-export type Command = StaticCommand | DynamicCommand;
+/** A non-runnable command namespace with explicitly declared child commands. */
+export interface CommandGroup extends CommandBase {
+  readonly subcommands: readonly Command[];
+  readonly response?: never;
+  readonly handler?: never;
+}
+
+/** A configured terminal command or explicit command group. */
+export type Command = StaticCommand | DynamicCommand | CommandGroup;
 
 /** Configuration shared by the future vanilla-JS and React renderers. */
 export interface TerminalConfig {

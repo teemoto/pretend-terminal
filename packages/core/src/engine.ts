@@ -309,6 +309,13 @@ export function createTerminalEngine(
       return { status: 'executed', command };
     }
 
+    if ('subcommands' in command.command) {
+      const message = `Specify a subcommand for ${command.name}.`;
+      appendOutput({ type: 'error', value: message });
+      emit();
+      return { status: 'invalid', input: submittedInput, message };
+    }
+
     let parsedInput: ParsedCommandLine | undefined;
     let values: ValidatedCommandValues | undefined;
     if (hasSchema(command)) {
