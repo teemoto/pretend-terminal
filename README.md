@@ -46,6 +46,8 @@ For local visual testing, the repository includes vanilla and React Vite example
 
 Before merging or preparing a release, install with `corepack pnpm install --frozen-lockfile`, then run the appropriate focused checks described in the [test strategy](docs/TEST_STRATEGY.md). Pull requests require formatting, linting, type checks, production builds, core/DOM tests, React integration tests, and Chromium E2E. Pushes to `main` and release preparation also require the packed-package consumer check plus Firefox and WebKit E2E. Browser runs use zero retries and preserve diagnostic artifacts only when they fail.
 
+v2 work follows the [v2 development strategy](docs/V2_DEVELOPMENT_STRATEGY.md): it is isolated from the stable v1 line, test-first, and required to pass the v1 regression gate before merge.
+
 ## Releases and changelog
 
 Published release notes live in [CHANGELOG.md](CHANGELOG.md). This monorepo uses [Changesets](https://github.com/changesets/changesets): consumer-visible package changes receive a Changeset, `corepack pnpm version-packages` applies the approved version bumps and generates package-specific changelogs, and `corepack pnpm release` publishes only after the repository owner explicitly approves it. Publishing is never part of CI.
