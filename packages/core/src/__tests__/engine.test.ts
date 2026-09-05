@@ -196,6 +196,46 @@ describe('createTerminalEngine', () => {
     await expect(engine.run('project')).resolves.toMatchObject({ status: 'invalid' });
   });
 
+  it('renders structured group help and short-circuits a command with --help', async () => {
+    const handler = vi.fn(() => ({ type: 'success' as const, value: 'Created.' }));
+    const engine = createTerminalEngine({
+      includeBuiltIns: true,
+      commands: [
+        {
+          name: 'project',
+          description: 'Manage projects.',
+          subcommands: [
+            {
+              name: 'create',
+              description: 'Create a project.',
+              arguments: [{ name: 'name', required: true, description: 'Project name' }],
+              handler,
+            },
+          ],
+        },
+      ],
+    });
+
+    await expect(engine.run('help project')).resolves.toMatchObject({ status: 'executed' });
+    expect(engine.getState().transcript.at(-1)).toEqual({
+      kind: 'output',
+      output: {
+        type: 'table',
+        headers: ['Subcommand', 'Description'],
+        rows: [['create', 'Create a project.']],
+      },
+    });
+
+    await expect(engine.run('project create --help')).resolves.toMatchObject({
+      status: 'executed',
+    });
+    expect(handler).not.toHaveBeenCalled();
+    expect(engine.getState().transcript.at(-1)).toMatchObject({
+      kind: 'output',
+      output: { type: 'table', headers: ['Input', 'Description'] },
+    });
+  });
+
   it('rejects concurrent asynchronous commands and exposes execution state', async () => {
     let resolveStatus: ((value: { type: 'success'; value: string }) => void) | undefined;
     const engine = createTerminalEngine({

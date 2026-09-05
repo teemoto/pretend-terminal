@@ -311,7 +311,7 @@ export function createTerminalEngine(
     }
 
     if (command.source === 'built-in') {
-      const result = runBuiltIn(command);
+      const result = runBuiltIn(command, parsedResult?.ok ? parsedResult.value.positionals : []);
 
       if (result === 'cleared') {
         return { status: 'cleared', command };
@@ -327,6 +327,12 @@ export function createTerminalEngine(
       appendOutput({ type: 'error', value: message });
       emit();
       return { status: 'invalid', input: submittedInput, message };
+    }
+
+    if (parsedForCommand?.flags.help === true) {
+      appendOutput(createCommandHelpOutput(command));
+      emit();
+      return { status: 'executed', command };
     }
 
     let parsedInput: ParsedCommandLine | undefined;
@@ -387,9 +393,18 @@ export function createTerminalEngine(
     return { status: 'executed', command };
   }
 
-  function runBuiltIn(command: RegisteredBuiltInCommand): TerminalOutput | 'cleared' {
+  function runBuiltIn(
+    command: RegisteredBuiltInCommand,
+    path: readonly string[] = [],
+  ): TerminalOutput | 'cleared' {
     switch (command.builtIn) {
       case 'help':
+        if (path.length > 0) {
+          const target = registry.get(path[0] ?? '');
+          if (target?.source === 'consumer') {
+            return createCommandHelpOutput(target);
+          }
+        }
         return {
           type: 'table',
           headers: ['Command', 'Description'],
@@ -501,7 +516,38 @@ function isGroup(
 }
 
 function canResolveFromParsedInput(command: RegisteredCommand | undefined): boolean {
-  return hasSchema(command) || isGroup(command);
+  return hasSchema(command) || isGroup(command) || command?.source === 'built-in';
+}
+
+function createCommandHelpOutput(
+  command: Extract<RegisteredCommand, { readonly source: 'consumer' }>,
+): TerminalOutput {
+  if ('subcommands' in command.command) {
+    return {
+      type: 'table',
+      headers: ['Subcommand', 'Description'],
+      rows: command.subcommands.map((child) => [
+        formatCommandLabel(child),
+        child.description ?? '',
+      ]),
+    };
+  }
+  const rows = [
+    ...(command.command.arguments ?? []).map((argument) => [
+      argument.name,
+      `${argument.required ? 'Required' : 'Optional'} argument${argument.description ? ` — ${argument.description}` : ''}`,
+    ]),
+    ...(command.command.flags ?? []).map((flag) => [
+      `--${flag.name}`,
+      `${flag.required ? 'Required' : 'Optional'} flag${flag.description ? ` — ${flag.description}` : ''}`,
+    ]),
+  ];
+  return rows.length > 0
+    ? [
+        { type: 'text', value: command.description ?? command.name },
+        { type: 'table', headers: ['Input', 'Description'], rows },
+      ]
+    : { type: 'text', value: command.description ?? command.name };
 }
 
 function toCompletionSuggestion(command: RegisteredCommand): TerminalCompletionSuggestion {
