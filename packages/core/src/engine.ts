@@ -408,10 +408,9 @@ export function createTerminalEngine(
         return {
           type: 'table',
           headers: ['Command', 'Description'],
-          rows: registry.commands.map((registered) => [
-            formatCommandLabel(registered),
-            registered.description ?? '',
-          ]),
+          rows: registry.commands
+            .filter((registered) => !registered.hidden)
+            .map((registered) => [formatCommandLabel(registered), registered.description ?? '']),
         };
       case 'clear':
         clear();
@@ -526,10 +525,9 @@ function createCommandHelpOutput(
     return {
       type: 'table',
       headers: ['Subcommand', 'Description'],
-      rows: command.subcommands.map((child) => [
-        formatCommandLabel(child),
-        child.description ?? '',
-      ]),
+      rows: command.subcommands
+        .filter((child) => !child.hidden)
+        .map((child) => [formatCommandLabel(child), child.description ?? '']),
     };
   }
   const rows = [

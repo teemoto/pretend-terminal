@@ -20,6 +20,9 @@ export interface RegisteredCommandBase {
   /** Lookup keys derived from aliases. */
   readonly normalizedAliases: readonly string[];
   readonly description?: string;
+  readonly category?: string;
+  readonly examples: readonly string[];
+  readonly hidden: boolean;
 }
 
 /** A built-in command registered by the core package. */
@@ -132,6 +135,8 @@ function createBuiltInCommand(definition: BuiltInCommandDefinition): RegisteredB
     aliases: [],
     normalizedAliases: [],
     description: definition.description,
+    examples: [],
+    hidden: false,
   };
 }
 
@@ -149,6 +154,9 @@ function createConsumerCommand(command: Command): RegisteredConsumerCommand {
     aliases,
     normalizedAliases: aliases.map((alias) => requireCommandKey(alias, 'alias')),
     description: command.description,
+    category: command.category,
+    examples: command.examples ?? [],
+    hidden: command.hidden === true,
     subcommands,
   };
 }

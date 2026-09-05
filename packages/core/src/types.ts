@@ -164,6 +164,9 @@ interface CommandBase {
   readonly name: string;
   readonly aliases?: readonly string[];
   readonly description?: string;
+  readonly category?: string;
+  readonly examples?: readonly string[];
+  readonly hidden?: boolean;
   /** Optional JSON-compatible positional argument validation. */
   readonly arguments?: readonly CommandArgumentSchema[];
   /** Optional JSON-compatible named flag validation. */
